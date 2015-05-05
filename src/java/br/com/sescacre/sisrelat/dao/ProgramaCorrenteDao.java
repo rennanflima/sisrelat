@@ -7,7 +7,6 @@
 package br.com.sescacre.sisrelat.dao;
 
 import br.com.sescacre.sisrelat.util.Conexao;
-import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,16 +53,10 @@ public class ProgramaCorrenteDao {
         try {
             Connection conn = con.abreConexao();
             PreparedStatement ps = conn.prepareStatement(
-                    "SELECT PO.CDPROGRAMA, "+ 
-                        "PO.SQOCORRENC, " +
-                        "PO.CDCONFIG, " +
-                        "PO.DSUSUARIO, " +
-                        "H.HRINICIO, "+
-                        "H.HRFIM " +
-                    "FROM PROGOCORR PO INNER JOIN HORARIOS H ON PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ? "+
-                        "AND PO.CDPROGRAMA = CAST(SUBSTR(H.CDELEMENT, 1, 8) AS INTEGER) " +
-                        "AND PO.CDCONFIG = CAST(SUBSTR(H.CDELEMENT, 9, 8) AS INTEGER) " + 
-                        "AND PO.SQOCORRENC = CAST(SUBSTR(H.CDELEMENT, 17, 8) AS INTEGER)");
+                    "SELECT PO.CDPROGRAMA, PO.CDCONFIG, PO.SQOCORRENC, PO.DSUSUARIO, H.HRINICIO, H.HRFIM "
+                    + "FROM PROGOCORR PO INNER JOIN HORARIOS H ON H.CDELEMENT = SUBSTR(CAST(100000000 + PO.CDPROGRAMA AS CHAR(9)), 2, 8) || "
+                        + "SUBSTR(CAST(100000000 + PO.CDCONFIG AS CHAR(9)), 2, 8) || SUBSTR(CAST(100000000 + PO.SQOCORRENC AS CHAR(9)), 2, 8) "
+                    + "WHERE PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ?");
             ps.setLong(1, atividade);
             ps.setLong(2, configuracao);
             ps.setLong(3, sequenciaOcorrcencia);
@@ -73,8 +66,8 @@ public class ProgramaCorrenteDao {
                 programaCorrente.setSequenciaOcorrencia(rs.getLong("SQOCORRENC"));
                 programaCorrente.setConfiguracaoPrograma(rs.getLong("CDCONFIG"));
                 programaCorrente.setDescricao(rs.getString("DSUSUARIO"));
-                programaCorrente.setHoraInicio(new java.util.Date(rs.getDate("HRINICIO").getTime()));
-                programaCorrente.setHoraFim(new java.util.Date(rs.getDate("HRFIM").getTime()));
+                programaCorrente.setHoraInicio(rs.getTime("HRINICIO"));
+                programaCorrente.setHoraFim(rs.getTime("HRFIM"));
             }
             return programaCorrente;
         } catch (Exception e) {

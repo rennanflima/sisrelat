@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+
+        <p:fieldset legend="Relatório - Inscritos por Turma" style="max-width: 800px;">
+
+            <br/>
+            <br/>
+            <h:form id="filtroAcessoPorPeriodo">
+                <h:panelGrid id="filtro" columns="2" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="dtInicio" value="Data de Início:"/>
+                    <p:calendar id="dtInicio" locale="pt" label="Data de Início" value="#{acessoPorPeriodo.dtInicio}"
+                                pattern="dd/MM/yyyy HH:mm:ss" immediate="true">
+                        <p:ajax update="dtTermino" event="dateSelect"/>
+                    </p:calendar>
+
+                    <p:outputLabel for="dtTermino" value="Data de Término:"/>
+                    <p:calendar id="dtTermino" locale="pt" label="Data de Término" value="#{acessoPorPeriodo.dtTermino}"
+                                mindate="#{acessoPorPeriodo.dtInicio}" pattern="dd/MM/yyyy HH:mm:ss" immediate="true"/>
+                </h:panelGrid>
+                <br/>
+                <div style="float: right;">
+                    <p:commandButton value="Filtrar" ajax="false" action="#{acessoPorPeriodo.gerarRelatorioWeb()}" immediate="false" onclick="this.form.target = '_blank'" />
+                    <p:spacer width="5" height="0"/>
+                </div>
+            </h:form>
+            <br />
+            <div style="float: left; font-size: 11px; font-weight:bold;">
+                * Campo obrigatório
+            </div>
+            <br/>
+        </p:fieldset>
+    </ui:define>
+
+</ui:composition>

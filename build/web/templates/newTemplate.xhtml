@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <script type="text/javascript">
+            PrimeFaces.locales['pt'] = {
+                closeText: 'OK',
+                prevText: 'Anterior',
+                nextText: 'Próximo',
+                currentText: 'Começo',
+                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Des'],
+                dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Só Horas',
+                timeText: 'Tempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Hora Atual',
+                        ampm: false,
+                month: 'Mês',
+                week: 'Semana',
+                day: 'Dia',
+                allDayText: 'Todo Dia'
+            };
+        </script>
+        <title>Sistema de Relatórios e Faltas</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top">
+            <p:graphicImage value="/resources/imgs/logo.png" width="100%"/>
+        </div>
+        <div>
+            <h:form>
+                <p:menubar>
+                    <p:menuitem value="Início" url="/index.xhtml" />
+                    <p:menuitem value="Realizar Chamada" url="/servicos/chamada.xhtml" />
+                    <p:submenu label="Relatórios">
+                        <p:submenu label="Acesso da Catraca">
+                            <p:menuitem value="Por Período" url="/pgRelatorios/acessoPorPeriodo.xhtml" />
+                            <p:menuitem value="Por Período e Tipo de Cliente" url="/pgRelatorios/acessoPeriodoTipo.xhtml" />
+                        </p:submenu>
+                        <p:menuitem value="Inscritos da Turma" url="/pgRelatorios/inscritosTurma.xhtml" />
+                    </p:submenu>
+                </p:menubar>
+            </h:form>
+        </div>
+        <div id="content" class="center_content">
+            <ui:insert name="content">Content</ui:insert>
+        </div>
+
+        <div id="bottom">
+            <p>Copyright© 2015 - Todos os Direitos Reservados
+                <br/>
+                Serviço Social do Comércio - Sesc-DR/AC</p>
+        </div>
+
+    </h:body>
+
+</html>

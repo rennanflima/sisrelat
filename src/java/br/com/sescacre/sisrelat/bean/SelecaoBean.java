@@ -5,11 +5,17 @@
  */
 package br.com.sescacre.sisrelat.bean;
 
+import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
+import br.com.sescacre.sisrelat.dao.InscricaoDao;
+import br.com.sescacre.sisrelat.dao.PactoAcessoDao;
 import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
+import br.com.sescacre.sisrelat.entidades.Chamada;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
+import br.com.sescacre.sisrelat.entidades.Inscritos;
+import br.com.sescacre.sisrelat.entidades.PactoAcesso;
 import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
@@ -18,10 +24,10 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,7 +58,7 @@ public class SelecaoBean implements Serializable {
     private List<Programa> listaAtividades = new ArrayList<Programa>();
     private List<ConfiguracaoPrograma> listaConfiguracoes = new ArrayList<ConfiguracaoPrograma>();
     private List<ProgramaCorrente> listaTurmas = new ArrayList<ProgramaCorrente>();
-    private Date dataChamada; 
+    private Date dataChamada;
 
     @PostConstruct
     public void init() {
@@ -161,7 +167,7 @@ public class SelecaoBean implements Serializable {
 
     public List<ProgramaCorrente> getListaTurmas() {
         if (idConf != null && idAtividade != null) {
-            return listaTurmas = new ProgramaCorrenteDao().listaTurma(idAtividade,idConf);
+            return listaTurmas = new ProgramaCorrenteDao().listaTurma(idAtividade, idConf);
         }
         return listaTurmas;
     }
@@ -177,7 +183,7 @@ public class SelecaoBean implements Serializable {
     public void setDataChamada(Date dataChamada) {
         this.dataChamada = dataChamada;
     }
-    
+
     public void geraRelatório() {
         InscritosTurma it = new InscritosTurma();
         it.gerarRelatorioWeb(idAtividade, idConf, idTurma);
@@ -191,10 +197,12 @@ public class SelecaoBean implements Serializable {
         idConf = null;
         return null;
     }
-    
-    public String realizaChamada(){
+
+    public String realizaChamada() {
+        List<Chamada> chamada = new ArrayList<Chamada>();
+        List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(idAtividade, idConf, idTurma);
         ProgramaCorrente progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
-        if(progocor != null){
+        if (progocor != null) {
             System.out.println("Descrição: " + progocor.getDescricao());
             System.out.println("Horario: " + progocor.getHoraInicio() + " - " + progocor.getHoraFim());
         }
@@ -206,11 +214,40 @@ public class SelecaoBean implements Serializable {
         for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
             LocalDate data = anoMes.atDay(dia);
             if (!data.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-               // Instant instant = data.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-                //Date diaChamada = Date.from(instant);
-                System.out.println("Dia: "+ data);
-                
+                List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, progocor.getHoraInicio(), progocor.getHoraFim());
+                for (PactoAcesso acesso : lista) {
+                    for (Inscritos insc : inscritos) {
+                        if (acesso.getMatFormat().equals(insc.getMatFormat())) {
+                            Chamada presenca = new Chamada();
+                            presenca.setSqmatric(insc.getSqMatric());
+                            presenca.setCduop(insc.getCdUop());
+                            presenca.setCdprograma(insc.getCdPrograma());
+                            presenca.setCdconfig(insc.getCdConfig());
+                            presenca.setSqocorrenc(insc.getSqOcorrenc());
+                            presenca.setDtaula(Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                            presenca.setHriniaula(progocor.getHoraInicio());
+                            presenca.setVbfalta(false);
+                            presenca.setLgatu("jcavalcant");
+                            presenca.setDtatu(new Date());
+                            presenca.setHratu(new Date());
+                            chamada.add(presenca);
+                        }
+                    }
+                }
+                break;
             }
+        }
+        if (chamada.size() <= inscritos.size()) {
+            System.out.println("Tamanho da lista: " + chamada.size());
+            for (Chamada ch : chamada) {
+                try {
+                    new ChamadaDao().salvar(ch);
+                } catch (Exception ex) {
+                    System.out.println("Erro ao salvar a chamada: " + ex.getMessage());
+                }
+            }
+        } else {
+            System.out.println("Tamanho da lista de chamada é maior: " + chamada.size());
         }
         return null;
     }

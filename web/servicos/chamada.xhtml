@@ -8,10 +8,20 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
+        <!-- Modal de Aguarde... -->
+        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
+                  draggable="false" closable="false" resizable="false">  
+            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
+        </p:dialog>
+        
         <p:fieldset legend="Realizar Chamada" style="max-width: 800px;">
             <br/>
-            <br/>
             <h:form id="filtroChamada">
+                
+                <p:growl id="aviso" life="5000" />
+                
                 <h:panelGrid id="falta" columns="2" cellpadding="4" cellspacing="10">
                     <p:outputLabel for="uop" value="Unidade Operacional: "/>
                     <p:selectOneMenu id="uop" required="true" value="#{selecaoBean.idUop}"
@@ -71,7 +81,7 @@
                                 mindate="#{selecaoBean.dataChamada}" pattern="MM/yyyy" immediate="true"/>
                 </h:panelGrid>
                 <div style="float: right;">
-                    <p:commandButton value="Filtrar" ajax="false" action="#{selecaoBean.realizaChamada()}" immediate="false" />
+                    <p:commandButton value="Realizar Chamada" update="filtroChamada, :filtroChamada:aviso" action="#{selecaoBean.realizaChamada()}" immediate="false" />
                     <p:spacer width="5" height="0"/>
                 </div>
             </h:form>

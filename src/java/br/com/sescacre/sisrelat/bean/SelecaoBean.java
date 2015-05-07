@@ -21,22 +21,19 @@ import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 /**
  *
@@ -195,17 +192,15 @@ public class SelecaoBean implements Serializable {
         idModalidade = null;
         idAtividade = null;
         idConf = null;
+        dataChamada = null;
         return null;
     }
 
     public String realizaChamada() {
         List<Chamada> chamada = new ArrayList<Chamada>();
+        FacesContext msg = FacesContext.getCurrentInstance();
         List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(idAtividade, idConf, idTurma);
         ProgramaCorrente progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
-        if (progocor != null) {
-            System.out.println("Descrição: " + progocor.getDescricao());
-            System.out.println("Horario: " + progocor.getHoraInicio() + " - " + progocor.getHoraFim());
-        }
         Calendar c = Calendar.getInstance();
         c.setTime(dataChamada);
         int mes = c.get(Calendar.MONTH) + 1;
@@ -229,14 +224,13 @@ public class SelecaoBean implements Serializable {
                     presenca.setHratu(new Date());
                     for (PactoAcesso acesso : lista) {
                         if (acesso.getMatFormat().equals(insc.getMatFormat())) {
-                            presenca.setVbfalta(false);
+                            presenca.setVbfalta(true);
                             break;
                         }
                     }
                     chamada.add(presenca);
                 }
                 if (chamada.size() <= inscritos.size()) {
-                    System.out.println("Tamanho da lista: " + chamada.size());
                     for (Chamada ch : chamada) {
                         try {
                             new ChamadaDao().salvar(ch);
@@ -250,6 +244,10 @@ public class SelecaoBean implements Serializable {
                 chamada = new ArrayList<Chamada>();
             }
         }
+        msg.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "A chamada da turma '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
+        limparCampos();
         return null;
     }
 }

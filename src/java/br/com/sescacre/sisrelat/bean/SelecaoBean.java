@@ -215,39 +215,40 @@ public class SelecaoBean implements Serializable {
             LocalDate data = anoMes.atDay(dia);
             if (!data.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                 List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, progocor.getHoraInicio(), progocor.getHoraFim());
-                for (PactoAcesso acesso : lista) {
-                    for (Inscritos insc : inscritos) {
+                for (Inscritos insc : inscritos) {
+                    Chamada presenca = new Chamada();
+                    presenca.setSqmatric(insc.getSqMatric());
+                    presenca.setCduop(insc.getCdUop());
+                    presenca.setCdprograma(insc.getCdPrograma());
+                    presenca.setCdconfig(insc.getCdConfig());
+                    presenca.setSqocorrenc(insc.getSqOcorrenc());
+                    presenca.setDtaula(Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                    presenca.setHriniaula(progocor.getHoraInicio());
+                    presenca.setLgatu("jcavalcant");
+                    presenca.setDtatu(new Date());
+                    presenca.setHratu(new Date());
+                    for (PactoAcesso acesso : lista) {
                         if (acesso.getMatFormat().equals(insc.getMatFormat())) {
-                            Chamada presenca = new Chamada();
-                            presenca.setSqmatric(insc.getSqMatric());
-                            presenca.setCduop(insc.getCdUop());
-                            presenca.setCdprograma(insc.getCdPrograma());
-                            presenca.setCdconfig(insc.getCdConfig());
-                            presenca.setSqocorrenc(insc.getSqOcorrenc());
-                            presenca.setDtaula(Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                            presenca.setHriniaula(progocor.getHoraInicio());
                             presenca.setVbfalta(false);
-                            presenca.setLgatu("jcavalcant");
-                            presenca.setDtatu(new Date());
-                            presenca.setHratu(new Date());
-                            chamada.add(presenca);
+                            break;
                         }
                     }
+                    chamada.add(presenca);
                 }
-                break;
-            }
-        }
-        if (chamada.size() <= inscritos.size()) {
-            System.out.println("Tamanho da lista: " + chamada.size());
-            for (Chamada ch : chamada) {
-                try {
-                    new ChamadaDao().salvar(ch);
-                } catch (Exception ex) {
-                    System.out.println("Erro ao salvar a chamada: " + ex.getMessage());
+                if (chamada.size() <= inscritos.size()) {
+                    System.out.println("Tamanho da lista: " + chamada.size());
+                    for (Chamada ch : chamada) {
+                        try {
+                            new ChamadaDao().salvar(ch);
+                        } catch (Exception ex) {
+                            System.out.println("Erro ao salvar a chamada: " + ex.getMessage());
+                        }
+                    }
+                } else {
+                    System.out.println("Tamanho da lista de chamada é maior: " + chamada.size());
                 }
+                chamada = new ArrayList<Chamada>();
             }
-        } else {
-            System.out.println("Tamanho da lista de chamada é maior: " + chamada.size());
         }
         return null;
     }

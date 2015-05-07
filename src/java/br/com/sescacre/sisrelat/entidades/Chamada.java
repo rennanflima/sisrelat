@@ -37,7 +37,7 @@ public class Chamada implements Serializable{
     @Id
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date hriniaula;
-    private boolean vbfalta;
+    private boolean vbfalta = true;
     private String lgatu;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dtatu;

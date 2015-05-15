@@ -20,9 +20,12 @@ import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
+import br.com.sescacre.sisrelat.util.DateConverter;
 import java.io.Serializable;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -193,6 +196,7 @@ public class SelecaoBean implements Serializable {
         idAtividade = null;
         idConf = null;
         dataChamada = null;
+        idTurma = null;
         return null;
     }
 
@@ -205,49 +209,24 @@ public class SelecaoBean implements Serializable {
         c.setTime(dataChamada);
         int mes = c.get(Calendar.MONTH) + 1;
         int ano = c.get(Calendar.YEAR);
-        YearMonth anoMes = YearMonth.of(ano, mes);
-        for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
-            LocalDate data = anoMes.atDay(dia);
-            if (!data.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, progocor.getHoraInicio(), progocor.getHoraFim());
-                for (Inscritos insc : inscritos) {
-                    Chamada presenca = new Chamada();
-                    presenca.setSqmatric(insc.getSqMatric());
-                    presenca.setCduop(insc.getCdUop());
-                    presenca.setCdprograma(insc.getCdPrograma());
-                    presenca.setCdconfig(insc.getCdConfig());
-                    presenca.setSqocorrenc(insc.getSqOcorrenc());
-                    presenca.setDtaula(Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                    presenca.setHriniaula(progocor.getHoraInicio());
-                    presenca.setLgatu("jcavalcant");
-                    presenca.setDtatu(new Date());
-                    presenca.setHratu(new Date());
-                    for (PactoAcesso acesso : lista) {
-                        if (acesso.getMatFormat().equals(insc.getMatFormat())) {
-                            presenca.setVbfalta(true);
-                            break;
-                        }
-                    }
-                    chamada.add(presenca);
-                }
-                if (chamada.size() <= inscritos.size()) {
-                    for (Chamada ch : chamada) {
-                        try {
-                            new ChamadaDao().salvar(ch);
-                        } catch (Exception ex) {
-                            System.out.println("Erro ao salvar a chamada: " + ex.getMessage());
-                        }
-                    }
-                } else {
-                    System.out.println("Tamanho da lista de chamada é maior: " + chamada.size());
-                }
-                chamada = new ArrayList<Chamada>();
-            }
+        LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
+        LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
+        Duration duration = Duration.between(horaInicio, horaFim);
+        System.out.println("Hora: "+duration.toHours());
+        System.out.println("Minutos: "+duration.toMinutes());
+        if(duration.toHours() <= 1){
+            msg.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Turmas de até uma hora de duração. Horário fixo!!", null));
+            //RealizarChamada.turmasHorarioFechado(ano, mes, progocor, inscritos, chamada, msg);
+        } else {
+            msg.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Turmas de horário livre!", null));
         }
-        msg.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,
-                                "A chamada da turma '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
         limparCampos();
         return null;
     }
+
+    
 }

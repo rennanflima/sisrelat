@@ -218,8 +218,6 @@ public class SelecaoBean implements Serializable {
         LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
         LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
         Duration duration = Duration.between(horaInicio, horaFim);
-        System.out.println("Hora: " + duration.toHours());
-        System.out.println("Minutos: " + duration.toMinutes());
         if (duration.toHours() <= 1) {
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,

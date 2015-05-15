@@ -15,6 +15,7 @@ import br.com.sescacre.sisrelat.util.DateConverter;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -43,7 +44,7 @@ public class RealizarChamada {
                     presenca.setCdprograma(insc.getCdPrograma());
                     presenca.setCdconfig(insc.getCdConfig());
                     presenca.setSqocorrenc(insc.getSqOcorrenc());
-                    presenca.setDtaula(Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                    presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
                     presenca.setHriniaula(progocor.getHoraInicio());
                     presenca.setLgatu("jcavalcant");
                     presenca.setDtatu(new Date());
@@ -79,36 +80,58 @@ public class RealizarChamada {
         YearMonth anoMes = YearMonth.of(ano, mes);
         LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
         LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
+        System.out.println(">>>>>>>>>>>> Entrada <<<<<<<<<<<<<<<<<<");
+        System.out.println();
         for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
             LocalDate data = anoMes.atDay(dia);
             if (!data.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                 for (Inscritos insc : inscritos) {
+
                     List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, progocor.getHoraInicio(), progocor.getHoraFim(), insc.getSqMatric());
-                    LocalTime entrada = null;
-                    LocalTime saida = null;
+                    LocalDateTime entrada = null;
+                    LocalDateTime saida = null;
                     for (PactoAcesso pa : lista) {
                         System.out.println(pa.getMatFormat() + " - " + pa.getNmCliente() + " - " + pa.getDirecao() + " - " + pa.getDataHora());
                         if (pa.getDirecao().equals("Entrada")) {
-                            entrada = DateConverter.convertDateToLocalTime(pa.getDataHora());
+                            entrada = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
                         } else {
-                            saida = DateConverter.convertDateToLocalTime(pa.getDataHora());
+                            saida = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
                         }
                     }
                     if (entrada != null && saida != null) {
-                        System.out.println("Entrada: " + entrada.getHour());
-                        System.out.println("Saida: " + saida.getHour());
                         int count = 0;
-                        LocalTime tmp = entrada;
-                        while (tmp.getHour() <= saida.getHour()){
-                            System.out.println("Hora Atendimento: "+tmp);
+                        LocalDateTime tmp = entrada;
+                        while (tmp.getHour() <= saida.getHour()) {
+                            Chamada presenca = new Chamada();
+                            presenca.setSqmatric(insc.getSqMatric());
+                            presenca.setCduop(insc.getCdUop());
+                            presenca.setCdprograma(insc.getCdPrograma());
+                            presenca.setCdconfig(insc.getCdConfig());
+                            presenca.setSqocorrenc(insc.getSqOcorrenc());
+                            presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                            presenca.setLgatu("jcavalcant");
+                            presenca.setDtatu(new Date());
+                            presenca.setHratu(new Date());
+                            if (!tmp.isAfter(saida)) {
+                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(tmp));
+                            } else {
+                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
+                            }
+                            presenca.setVbfalta(true);
+                            chamada.add(presenca);
                             tmp = tmp.plusHours(1);
                             count++;
                         }
-                        System.out.println("Atendimentos: " +count);
                     }
                     break;
                 }
             }
+        }
+        System.out.println();
+        System.out.println(">>>>>>>>>>> Chamada <<<<<<<<<<<<<<");
+        System.out.println();
+        for (Chamada ch : chamada) {
+            System.out.println(ch.getSqmatric() + " - " + ch.getDtaula() + " - " + ch.getHriniaula());
         }
     }
 }

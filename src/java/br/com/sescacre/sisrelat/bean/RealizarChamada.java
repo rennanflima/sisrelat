@@ -98,30 +98,66 @@ public class RealizarChamada {
                             saida = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
                         }
                     }
-                    if (entrada != null && saida != null) {
-                        int count = 0;
-                        LocalDateTime tmp = entrada;
-                        while (tmp.getHour() <= saida.getHour()) {
-                            Chamada presenca = new Chamada();
-                            presenca.setSqmatric(insc.getSqMatric());
-                            presenca.setCduop(insc.getCdUop());
-                            presenca.setCdprograma(insc.getCdPrograma());
-                            presenca.setCdconfig(insc.getCdConfig());
-                            presenca.setSqocorrenc(insc.getSqOcorrenc());
-                            presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
-                            presenca.setLgatu("jcavalcant");
-                            presenca.setDtatu(new Date());
-                            presenca.setHratu(new Date());
-                            if (!tmp.isAfter(saida)) {
-                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(tmp));
-                            } else {
-                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
+                    if (entrada != null || saida != null) { // lançamento de presença
+                        if (entrada != null) { //tem a entrada
+                            if (saida != null) { //tem entrada e saida
+                                int count = 0;
+                                LocalDateTime tmp = entrada;
+                                while (tmp.getHour() <= saida.getHour()) {
+                                    Chamada presenca = new Chamada();
+                                    presenca.setSqmatric(insc.getSqMatric());
+                                    presenca.setCduop(insc.getCdUop());
+                                    presenca.setCdprograma(insc.getCdPrograma());
+                                    presenca.setCdconfig(insc.getCdConfig());
+                                    presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                    presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                    presenca.setLgatu("jcavalcant");
+                                    presenca.setDtatu(new Date());
+                                    presenca.setHratu(new Date());
+                                    if (!tmp.isAfter(saida)) {
+                                        presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(tmp));
+                                    } else {
+                                        presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
+                                    }
+                                    presenca.setVbfalta(true);
+                                    chamada.add(presenca);
+                                    tmp = tmp.plusHours(1);
+                                    count++;
+                                }
+                            } else { // tem só a entrada
+                                Chamada presenca = new Chamada();
+                                presenca.setSqmatric(insc.getSqMatric());
+                                presenca.setCduop(insc.getCdUop());
+                                presenca.setCdprograma(insc.getCdPrograma());
+                                presenca.setCdconfig(insc.getCdConfig());
+                                presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                presenca.setLgatu("jcavalcant");
+                                presenca.setDtatu(new Date());
+                                presenca.setHratu(new Date());
+                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(entrada));
+                                presenca.setVbfalta(true);
+                                chamada.add(presenca);
                             }
-                            presenca.setVbfalta(true);
-                            chamada.add(presenca);
-                            tmp = tmp.plusHours(1);
-                            count++;
+                        } else { // nao tem a entrada
+                            if (saida != null) { // só tem a saida
+                                Chamada presenca = new Chamada();
+                                presenca.setSqmatric(insc.getSqMatric());
+                                presenca.setCduop(insc.getCdUop());
+                                presenca.setCdprograma(insc.getCdPrograma());
+                                presenca.setCdconfig(insc.getCdConfig());
+                                presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                presenca.setLgatu("jcavalcant");
+                                presenca.setDtatu(new Date());
+                                presenca.setHratu(new Date());
+                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
+                                presenca.setVbfalta(true);
+                                chamada.add(presenca);
+                            }
                         }
+                    } else{
+                        // TODO: lançar faltas
                     }
                     break;
                 }

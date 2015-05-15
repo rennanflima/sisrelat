@@ -197,6 +197,12 @@ public class SelecaoBean implements Serializable {
         idConf = null;
         dataChamada = null;
         idTurma = null;
+        listaProgramas = new ArrayList<Programa>();
+        listaAtividades = new ArrayList<Programa>();
+        listaConfiguracoes = new ArrayList<ConfiguracaoPrograma>();
+        listaModalidades = new ArrayList<Programa>();
+        listaTurmas = new ArrayList<ProgramaCorrente>();
+        init();
         return null;
     }
 
@@ -212,21 +218,21 @@ public class SelecaoBean implements Serializable {
         LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
         LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
         Duration duration = Duration.between(horaInicio, horaFim);
-        System.out.println("Hora: "+duration.toHours());
-        System.out.println("Minutos: "+duration.toMinutes());
-        if(duration.toHours() <= 1){
+        System.out.println("Hora: " + duration.toHours());
+        System.out.println("Minutos: " + duration.toMinutes());
+        if (duration.toHours() <= 1) {
             msg.addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "Turmas de até uma hora de duração. Horário fixo!!", null));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Turmas de até uma hora de duração. Horário fixo!!", null));
             //RealizarChamada.turmasHorarioFechado(ano, mes, progocor, inscritos, chamada, msg);
         } else {
-            msg.addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "Turmas de horário livre!", null));
+            /*msg.addMessage(null,
+             new FacesMessage(FacesMessage.SEVERITY_INFO,
+             "Turmas de horário livre!", null));*/
+            RealizarChamada.turmaHorarioLivre(ano, mes, progocor, inscritos, chamada, msg);
         }
         limparCampos();
         return null;
     }
 
-    
 }

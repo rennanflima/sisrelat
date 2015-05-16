@@ -5,29 +5,22 @@
  */
 package br.com.sescacre.sisrelat.bean;
 
-import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
 import br.com.sescacre.sisrelat.dao.InscricaoDao;
-import br.com.sescacre.sisrelat.dao.PactoAcessoDao;
 import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
 import br.com.sescacre.sisrelat.entidades.Chamada;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
 import br.com.sescacre.sisrelat.entidades.Inscritos;
-import br.com.sescacre.sisrelat.entidades.PactoAcesso;
 import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
 import br.com.sescacre.sisrelat.util.DateConverter;
 import java.io.Serializable;
-import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;

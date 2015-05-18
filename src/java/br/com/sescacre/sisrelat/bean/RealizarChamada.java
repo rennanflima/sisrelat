@@ -7,18 +7,16 @@ package br.com.sescacre.sisrelat.bean;
 
 import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.PactoAcessoDao;
+import br.com.sescacre.sisrelat.entidades.Acesso;
 import br.com.sescacre.sisrelat.entidades.Chamada;
 import br.com.sescacre.sisrelat.entidades.Inscritos;
 import br.com.sescacre.sisrelat.entidades.PactoAcesso;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.util.DateConverter;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,8 +42,8 @@ public class RealizarChamada {
                     presenca.setCdprograma(insc.getCdPrograma());
                     presenca.setCdconfig(insc.getCdConfig());
                     presenca.setSqocorrenc(insc.getSqOcorrenc());
-                    presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
                     presenca.setHriniaula(progocor.getHoraInicio());
+                    presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
                     presenca.setLgatu("jcavalcant");
                     presenca.setDtatu(new Date());
                     presenca.setHratu(new Date());
@@ -71,9 +69,10 @@ public class RealizarChamada {
                 chamada = new ArrayList<Chamada>();
             }
         }
+        System.out.println("Termino da chamada: " + new Date());
         msg.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "A chamada da turma '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
+                        "A chamada da turma de horário fixo '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
     }
 
     public static void turmaHorarioLivre(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, List<Chamada> chamada, FacesContext msg) {
@@ -90,17 +89,64 @@ public class RealizarChamada {
                     List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, progocor.getHoraInicio(), progocor.getHoraFim(), insc.getSqMatric());
                     LocalDateTime entrada = null;
                     LocalDateTime saida = null;
+                    //List<Acesso> listaAcessoAluno = new ArrayList<Acesso>();
                     //situaçao pensada para apenas uma entrada no dia
-                    if (!lista.isEmpty()) {// verifica se a lista de acesso está vazia 
-                        for (PactoAcesso pa : lista) { // percorre a lista de acesso de um aluno
+                    int contaEntradaDia = 0;
+                    // verifica se a lista de acesso está vazia 
+                    if (!lista.isEmpty()) {
+                        // percorre a lista de acesso na catraca de um aluno, sendo entrada e saida dois objetos
+                        for (PactoAcesso pa : lista) {
                             System.out.println(pa.getMatFormat() + " - " + pa.getNmCliente() + " - " + pa.getDirecao() + " - " + pa.getDataHora());
                             if (pa.getDirecao().equals("Entrada")) {// verifica a direção de entrada do aluno
                                 entrada = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
                             } else {
                                 saida = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
                             }
+                            /*
+                             // percorre e monta a lista com a entrada e saida sendo um unico objeto
+                             for (Acesso acesso : listaAcessoAluno) {
+                             LocalDateTime horaCatraca = DateConverter.convertDateToLocalDateTime(pa.getDataHora());
+                             // verifica a direção de entrada do aluno, entrada
+                             if (pa.getDirecao().equals("Entrada")) {
+                             LocalDateTime entrada = DateConverter.convertDateToLocalDateTime(acesso.getEntrada().getDataHora());
+                             // se tiver outro registro de entrada com a mesma hora já salva desconsidera desconsidera
+                             if (entrada.getHour() == horaCatraca.getHour()) {
+                             break;
+                             } else {
+                             //se tiver outro registro de entrada que for uma hora ou mais do que a salva cria um novo acesso 
+                             if (horaCatraca.getHour() >= entrada.plusHours(1).getHour()) {
+                             Acesso a = new Acesso();
+                             a.setEntrada(pa);
+                             listaAcessoAluno.add(a);
+                             }
+                             }
+                             contaEntradaDia++;
+                             // verifica a direção de entrada do aluno, saida
+                             } else {
+                             LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
+                             // verifica se nesse objeto já tem entrada
+                             if (acesso.getEntrada() != null) {
+                             // verifica se nesse objeto já tem saida
+                             if (acesso.getSaida() == null) {
+                             LocalDateTime entrada = DateConverter.convertDateToLocalDateTime(acesso.getEntrada().getDataHora());
+                             // se a hora da saída for maior ou igual a entrada salva a saida
+                             if (horaCatraca.getHour() >= entrada.getHour()) {
+                             acesso.setSaida(pa);
+                             }
+                             } else {
+                             break;
+                             }
+                             } else {
+                             //se o objeto nao tiver entrada, cria o objeto somento com a saida
+                             Acesso a = new Acesso();
+                             a.setSaida(pa);
+                             listaAcessoAluno.add(a);
+                             }
+                             }
+                             }*/
                         }
-                        if (entrada != null || saida != null) { // lançamento de presença
+                        // lançamento de presença
+                        if (entrada != null || saida != null) {
                             if (entrada != null) { //tem a entrada
                                 if (saida != null) { //tem entrada e saida
                                     LocalDateTime temp = horaInicio;
@@ -231,5 +277,6 @@ public class RealizarChamada {
                 System.out.println(ch.getSqmatric() + " - " + ch.getDtaula() + " - " + ch.getHriniaula() + " - F");
             }
         }
+        System.out.println("Termino da chamada: " + new Date());
     }
 }

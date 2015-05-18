@@ -26,7 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -211,11 +210,13 @@ public class SelecaoBean implements Serializable {
         LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
         LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
         Duration duration = Duration.between(horaInicio, horaFim);
+        System.out.println("Turma: " + progocor.getDescricao());
+        System.out.println("Horário: " + progocor.getHoraInicio() + " às " + progocor.getHoraFim());
+        System.out.println("Duração: " + duration.toHours() + " - Minutos: " + duration.toMinutes());
+        System.out.println();
         if (duration.toHours() <= 1) {
-            msg.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Turmas de até uma hora de duração. Horário fixo!!", null));
-            //RealizarChamada.turmasHorarioFechado(ano, mes, progocor, inscritos, chamada, msg);
+            System.out.println("Inicio da chamada: "+ new Date());
+            RealizarChamada.turmasHorarioFixo(ano, mes, progocor, inscritos, chamada, msg);
         } else {
             /*msg.addMessage(null,
              new FacesMessage(FacesMessage.SEVERITY_INFO,

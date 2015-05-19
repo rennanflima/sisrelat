@@ -214,8 +214,8 @@ public class SelecaoBean implements Serializable {
         System.out.println("Horário: " + progocor.getHoraInicio() + " às " + progocor.getHoraFim());
         System.out.println("Duração: " + duration.toHours() + " - Minutos: " + duration.toMinutes());
         System.out.println();
+        System.out.println("Inicio da chamada: "+ new Date());
         if (duration.toHours() <= 1) {
-            System.out.println("Inicio da chamada: "+ new Date());
             RealizarChamada.turmasHorarioFixo(ano, mes, progocor, inscritos, chamada, msg);
         } else {
             /*msg.addMessage(null,

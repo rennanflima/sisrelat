@@ -83,7 +83,12 @@ public class RealizarChamada implements Serializable {
         YearMonth anoMes = YearMonth.of(ano, mes);
         LocalDateTime horaInicio = DateConverter.convertDateToLocalDateTime(progocor.getHoraInicio());
         LocalDateTime horaFim = DateConverter.convertDateToLocalDateTime(progocor.getHoraFim());
-        System.out.println(">>>>>>>>>>>> Entrada <<<<<<<<<<<<<<<<<<");
+        System.out.println();
+        System.out.println("--------------------------------------------");
+        System.out.println();
+        System.out.println(">>>>>>>>>>>>>>>> Entrada <<<<<<<<<<<<<<<<<<<");
+        System.out.println();
+        System.out.println("--------------------------------------------");
         System.out.println();
         for (int dia = 1; dia <= anoMes.lengthOfMonth(); dia++) { //percorre todos os dias do mes
             LocalDate data = anoMes.atDay(dia);
@@ -102,7 +107,6 @@ public class RealizarChamada implements Serializable {
                         if (!lista.isEmpty()) {
                             // percorre a lista de acesso na catraca de um aluno, sendo entrada e saida dois objetos
                             for (PactoAcesso pa : lista) {
-                                System.out.println(pa.getMatFormat() + " - " + pa.getNmCliente() + " - " + pa.getDirecao() + " - " + pa.getDataHora());
                                 //inicializa a listaAcessoAluno
                                 if (listaAcessoAluno.isEmpty()) {
                                     if (pa.getDirecao().equals("Entrada")) {
@@ -179,12 +183,6 @@ public class RealizarChamada implements Serializable {
                                     }
                                 }
                             }
-                            System.out.println("QTD Entradas: " + contaEntradaDia);
-                            System.out.println("QTD Saidas: " + contaSaidaDia);
-                            System.out.println();
-                            System.out.println("--------------------------------------------");
-                            System.out.println();
-                            System.out.println(">>>>>>>>>>> Nova Lista Acesso <<<<<<<<<<<<<<");
                             for (Acesso acesso : listaAcessoAluno) {
                                 if (acesso.getEntrada() != null) {
                                     if (acesso.getSaida() != null) {
@@ -199,6 +197,9 @@ public class RealizarChamada implements Serializable {
                                     }
                                 }
                             }
+                            System.out.println();
+                            System.out.println("QTD Entradas: " + contaEntradaDia);
+                            System.out.println("QTD Saidas: " + contaSaidaDia);
                             System.out.println();
                             System.out.println("--------------------------------------------");
                             System.out.println();
@@ -344,9 +345,10 @@ public class RealizarChamada implements Serializable {
         }
 
         System.out.println();
-        
-        System.out.println(
-                ">>>>>>>>>>> Chamada <<<<<<<<<<<<<<");
+        System.out.println();
+        System.out.println(">>>>>>>>>>>>>>>> Chamada <<<<<<<<<<<<<<<<<<<");
+        System.out.println();
+        System.out.println("--------------------------------------------");
         System.out.println();
         for (Chamada ch : chamada) {
             if (ch.isVbfalta()) {
@@ -356,7 +358,9 @@ public class RealizarChamada implements Serializable {
             }
         }
 
-        System.out.println(
-                "Termino da chamada: " + new Date());
+        System.out.println();
+        System.out.println("--------------------------------------------");
+        System.out.println();
+        System.out.println("Termino da chamada: " + new Date());
     }
 }

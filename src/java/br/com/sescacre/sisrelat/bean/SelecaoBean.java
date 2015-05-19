@@ -199,7 +199,6 @@ public class SelecaoBean implements Serializable {
     }
 
     public String realizaChamada() {
-        List<Chamada> chamada = new ArrayList<Chamada>();
         FacesContext msg = FacesContext.getCurrentInstance();
         List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(idAtividade, idConf, idTurma);
         ProgramaCorrente progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
@@ -216,12 +215,12 @@ public class SelecaoBean implements Serializable {
         System.out.println();
         System.out.println("Inicio da chamada: "+ new Date());
         if (duration.toHours() <= 1) {
-            RealizarChamada.turmasHorarioFixo(ano, mes, progocor, inscritos, chamada, msg);
+            RealizarChamada.turmasHorarioFixo(ano, mes, progocor, inscritos, msg);
         } else {
             /*msg.addMessage(null,
              new FacesMessage(FacesMessage.SEVERITY_INFO,
              "Turmas de horário livre!", null));*/
-            RealizarChamada.turmaHorarioLivre(ano, mes, progocor, inscritos, chamada, msg);
+            RealizarChamada.turmaHorarioLivre(ano, mes, progocor, inscritos, msg);
         }
         limparCampos();
         return null;

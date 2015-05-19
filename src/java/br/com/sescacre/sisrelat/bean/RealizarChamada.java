@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.faces.application.FacesMessage;
@@ -32,7 +31,8 @@ import javax.faces.context.FacesContext;
  */
 public class RealizarChamada implements Serializable {
 
-    public static void turmasHorarioFixo(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, List<Chamada> chamada, FacesContext msg) {
+    public static void turmasHorarioFixo(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, FacesContext msg) {
+        List<Chamada> chamada = new ArrayList<Chamada>();
         YearMonth anoMes = YearMonth.of(ano, mes);
         for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
             LocalDate data = anoMes.atDay(dia);
@@ -78,7 +78,8 @@ public class RealizarChamada implements Serializable {
                         "A chamada da turma de horário fixo '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
     }
 
-    public static void turmaHorarioLivre(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, List<Chamada> chamada, FacesContext msg) {
+    public static void turmaHorarioLivre(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, FacesContext msg) {
+        List<Chamada> chamada = new ArrayList<Chamada>();
         YearMonth anoMes = YearMonth.of(ano, mes);
         LocalDateTime horaInicio = DateConverter.convertDateToLocalDateTime(progocor.getHoraInicio());
         LocalDateTime horaFim = DateConverter.convertDateToLocalDateTime(progocor.getHoraFim());
@@ -201,7 +202,8 @@ public class RealizarChamada implements Serializable {
                             System.out.println();
                             System.out.println("--------------------------------------------");
                             System.out.println();
-                            // lançamento de presença
+                            // LANÇAMENTO DA PRESENÇA E FALTA
+                            //percorre a lista de acesso do aluno por dia, podendo ter mais de um acesso
                             for (Acesso acesso : listaAcessoAluno) {
                                 if (acesso.getEntrada() != null || acesso.getSaida() != null) {
                                     //tem a entrada
@@ -342,7 +344,7 @@ public class RealizarChamada implements Serializable {
         }
 
         System.out.println();
-
+        
         System.out.println(
                 ">>>>>>>>>>> Chamada <<<<<<<<<<<<<<");
         System.out.println();

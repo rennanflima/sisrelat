@@ -5,7 +5,10 @@
  */
 package br.com.sescacre.sisrelat.entidades;
 
+import br.com.sescacre.sisrelat.util.DateConverter;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -142,7 +145,6 @@ public class Chamada implements Serializable, Comparable<Chamada>{
         hash = 59 * hash + Objects.hashCode(this.sqocorrenc);
         hash = 59 * hash + Objects.hashCode(this.dtaula);
         hash = 59 * hash + Objects.hashCode(this.hriniaula);
-        hash = 59 * hash + (this.vbfalta ? 1 : 0);
         return hash;
     }
 
@@ -173,10 +175,9 @@ public class Chamada implements Serializable, Comparable<Chamada>{
         if (!Objects.equals(this.dtaula, other.dtaula)) {
             return false;
         }
-        if (!Objects.equals(this.hriniaula, other.hriniaula)) {
-            return false;
-        }
-        if (this.vbfalta != other.vbfalta) {
+        LocalDateTime horaInicio = DateConverter.convertDateToLocalDateTime(this.hriniaula);
+        LocalDateTime outraHoraInicio = DateConverter.convertDateToLocalDateTime(other.hriniaula);
+        if (!Objects.equals(horaInicio.getHour(), outraHoraInicio.getHour())) {
             return false;
         }
         return true;
@@ -184,7 +185,15 @@ public class Chamada implements Serializable, Comparable<Chamada>{
 
     @Override
     public int compareTo(Chamada c) {
-        return this.dtatu.compareTo(c.getDtatu());
+        LocalDateTime hora = LocalDateTime.of(DateConverter.convertDateToLocalDate(this.dtaula), 
+				DateConverter.convertDateToLocalTime(this.hriniaula));
+        
+        LocalDateTime horaC = LocalDateTime.of(DateConverter.convertDateToLocalDate(c.getDtaula()), 
+				DateConverter.convertDateToLocalTime(c.getHriniaula()));
+        
+        return hora.compareTo(horaC);
+        
+        
     }
     
 }

@@ -19,7 +19,7 @@ import javax.persistence.Temporal;
  */
 @Entity
 @Table(name = "CAFALTAS")
-public class Chamada implements Serializable{
+public class Chamada implements Serializable, Comparable<Chamada>{
 
     @Id
     private Long sqmatric;
@@ -134,7 +134,7 @@ public class Chamada implements Serializable{
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = 7;
         hash = 59 * hash + Objects.hashCode(this.sqmatric);
         hash = 59 * hash + Objects.hashCode(this.cduop);
         hash = 59 * hash + Objects.hashCode(this.cdprograma);
@@ -143,9 +143,6 @@ public class Chamada implements Serializable{
         hash = 59 * hash + Objects.hashCode(this.dtaula);
         hash = 59 * hash + Objects.hashCode(this.hriniaula);
         hash = 59 * hash + (this.vbfalta ? 1 : 0);
-        hash = 59 * hash + Objects.hashCode(this.lgatu);
-        hash = 59 * hash + Objects.hashCode(this.dtatu);
-        hash = 59 * hash + Objects.hashCode(this.hratu);
         return hash;
     }
 
@@ -182,16 +179,12 @@ public class Chamada implements Serializable{
         if (this.vbfalta != other.vbfalta) {
             return false;
         }
-        if (!Objects.equals(this.lgatu, other.lgatu)) {
-            return false;
-        }
-        if (!Objects.equals(this.dtatu, other.dtatu)) {
-            return false;
-        }
-        if (!Objects.equals(this.hratu, other.hratu)) {
-            return false;
-        }
         return true;
+    }
+
+    @Override
+    public int compareTo(Chamada c) {
+        return this.dtatu.compareTo(c.getDtatu());
     }
     
 }

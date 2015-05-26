@@ -143,4 +143,26 @@ public class PactoAcessoDao {
         }
         return lista;
     }
+    
+        public ResultSet acessoPorPeriodoDoCliente(Connection conn, Date dtInicio, Date dtTermino, String sqmatric) {
+        ResultSet rs = null;
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT CF.MATFORMAT, "
+                        + "C.NMCLIENTE, "
+                        + "PA.TIPO, "
+                        + "PA.DIRECAO, "
+                        + "PA.DATAHORA "
+                    + "FROM CLIENTELA C INNER JOIN PACTOACESSO PA ON C.CDUOP = PA.CDUOP AND C.SQMATRIC = PA.SQMATRIC "
+                        + "AND PA.DATAHORA BETWEEN ? AND ?  AND PA.SQMATRIC = ?"
+                    + "INNER JOIN CLIFORMAT CF ON CF.CDUOP = PA.CDUOP AND CF.SQMATRIC = PA.SQMATRIC ");
+            ps.setDate(1, dtInicio);
+            ps.setDate(2, dtTermino);
+            ps.setString(3, sqmatric);
+            rs = ps.executeQuery();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
 }

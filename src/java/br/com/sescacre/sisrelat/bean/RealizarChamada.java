@@ -95,11 +95,9 @@ public class RealizarChamada implements Serializable {
             LocalDate data = anoMes.atDay(dia);
             if (!data.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {// verifica se é dia util
                 for (Inscritos insc : inscritos) { // percorre a lista de inscritos da turma
-                    if (insc.getSqMatric() == 20860) {//20860 e 10828  21768
+                    if (insc.getSqMatric() == 10828) {//20860(ok) e 10828 
                         //pesquisa o acesso de um aluno na catraca
                         List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, progocor.getHoraInicio(), progocor.getHoraFim(), insc.getSqMatric());
-                        //LocalDateTime entrada = null;
-                        //LocalDateTime saida = null;
                         CopyOnWriteArrayList<Acesso> listaAcessoAluno = new CopyOnWriteArrayList<Acesso>();
                         //situaçao pensada para apenas uma entrada no dia
                         int contaEntradaDia = 0;
@@ -237,26 +235,14 @@ public class RealizarChamada implements Serializable {
                                                             presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
                                                         }
                                                         presenca.setVbfalta(true);
-                                                        chamada.add(presenca);
+                                                        if (!chamada.contains(presenca)) {
+                                                            chamada.add(presenca);
+                                                        }
                                                         tmp = tmp.plusHours(1);
                                                         temp = temp.plusHours(1);
                                                     }
                                                     // temp fora do intevalo da entrada e saida, falta
                                                 } else {
-                                                    /*  Chamada presenca = new Chamada();
-                                                     presenca.setSqmatric(insc.getSqMatric());
-                                                     presenca.setCduop(insc.getCdUop());
-                                                     presenca.setCdprograma(insc.getCdPrograma());
-                                                     presenca.setCdconfig(insc.getCdConfig());
-                                                     presenca.setSqocorrenc(insc.getSqOcorrenc());
-                                                     presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
-                                                     presenca.setLgatu("jcavalcant");
-                                                     presenca.setDtatu(new Date());
-                                                     presenca.setHratu(new Date());
-                                                     presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(temp));
-                                                     if (!falta.contains(presenca)) {
-                                                     falta.add(presenca);
-                                                     }*/
                                                     temp = temp.plusHours(1);
                                                 }
                                             }
@@ -277,15 +263,10 @@ public class RealizarChamada implements Serializable {
                                                 if (temp.getHour() == entrada.getHour()) {
                                                     presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(entrada));
                                                     presenca.setVbfalta(true);
-                                                    chamada.add(presenca);
-                                                } /*else {
-                                                 presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(temp));
-                                                 falta.add(presenca);
-                                                 }
-                                                 //if (!chamada.contains(presenca)) {
-                                                 //  chamada.add(presenca);
-                                                 //}*/
-
+                                                    if (!chamada.contains(presenca)) {
+                                                        chamada.add(presenca);
+                                                    }
+                                                } 
                                                 temp = temp.plusHours(1);
                                             }
                                         }
@@ -309,16 +290,10 @@ public class RealizarChamada implements Serializable {
                                                 if (temp.getHour() == saida.getHour()) {
                                                     presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
                                                     presenca.setVbfalta(true);
-                                                    chamada.add(presenca);
-                                                } /*else {
-                                                 presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(temp));
-                                                 falta.add(presenca);
-                                                 }
-                                                 temp = temp.plusHours(1);
-                                                 //if (!chamada.contains(presenca)) {
-                                                 //  chamada.add(presenca);
-                                                 //}*/
-
+                                                    if (!chamada.contains(presenca)) {
+                                                        chamada.add(presenca);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -454,9 +429,9 @@ public class RealizarChamada implements Serializable {
         System.out.println();
 
         List<Chamada> listaC = new ArrayList<>(chamada);
-        
+
         Collections.sort(listaC);
-        
+
         for (Chamada ch : listaC) {
             if (ch.isVbfalta()) {
                 System.out.println(ch.getSqmatric() + " - " + ch.getDtaula() + " - " + ch.getHriniaula() + " - P");

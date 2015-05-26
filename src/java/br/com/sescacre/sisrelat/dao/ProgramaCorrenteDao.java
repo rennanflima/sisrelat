@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package br.com.sescacre.sisrelat.dao;
 
 import br.com.sescacre.sisrelat.util.Conexao;
@@ -19,7 +18,7 @@ import java.util.List;
  * @author Rennan Francisco
  */
 public class ProgramaCorrenteDao {
-    
+
     public List<ProgramaCorrente> listaTurma(Long prog, Long conf) {
         Conexao con = new Conexao();
         List<ProgramaCorrente> lista = new ArrayList<ProgramaCorrente>();
@@ -46,7 +45,7 @@ public class ProgramaCorrenteDao {
         }
         return lista;
     }
-    
+
     public ProgramaCorrente pegaPorId(Long atividade, Long configuracao, Long sequenciaOcorrcencia) {
         Conexao con = new Conexao();
         ProgramaCorrente programaCorrente = new ProgramaCorrente();
@@ -55,7 +54,7 @@ public class ProgramaCorrenteDao {
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT PO.CDPROGRAMA, PO.CDCONFIG, PO.SQOCORRENC, PO.DSUSUARIO, H.HRINICIO, H.HRFIM "
                     + "FROM PROGOCORR PO INNER JOIN HORARIOS H ON H.CDELEMENT = SUBSTR(CAST(100000000 + PO.CDPROGRAMA AS CHAR(9)), 2, 8) || "
-                        + "SUBSTR(CAST(100000000 + PO.CDCONFIG AS CHAR(9)), 2, 8) || SUBSTR(CAST(100000000 + PO.SQOCORRENC AS CHAR(9)), 2, 8) "
+                    + "SUBSTR(CAST(100000000 + PO.CDCONFIG AS CHAR(9)), 2, 8) || SUBSTR(CAST(100000000 + PO.SQOCORRENC AS CHAR(9)), 2, 8) "
                     + "WHERE PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ?");
             ps.setLong(1, atividade);
             ps.setLong(2, configuracao);
@@ -71,9 +70,32 @@ public class ProgramaCorrenteDao {
             }
             return programaCorrente;
         } catch (Exception e) {
-            System.out.println("Erro ao pesquisar pelo código a Atividade: "+e.getMessage());
+            System.out.println("Erro ao pesquisar pelo código a Atividade: " + e.getMessage());
             return null;
-        }finally{
+        } finally {
+            con.fechaConexao();
+        }
+    }
+
+    public List<String> buscaAtivadesIncritasCliente(String sqmatric) {
+        Conexao con = new Conexao();
+        List<String> atividades = new ArrayList<>();
+        try {
+            Connection conn = con.abreConexao();
+            PreparedStatement ps = conn.prepareStatement("SELECT PO.DSUSUARIO "
+                    + "FROM PROGOCORR PO INNER JOIN INSCRICAO I ON PO.CDPROGRAMA = I.CDPROGRAMA "
+                    + "AND PO.CDCONFIG = I.CDCONFIG AND PO.SQOCORRENC = I.SQOCORRENC "
+                    + "AND I.SQMATRIC = ? AND I.STINSCRI = 0");
+            ps.setString(1, sqmatric);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                atividades.add(rs.getString("DSUSUARIO"));
+            }
+            return atividades;
+        } catch (Exception e) {
+            System.out.println("Erro ao pesquisar pelo código a Atividade: " + e.getMessage());
+            return null;
+        } finally {
             con.fechaConexao();
         }
     }

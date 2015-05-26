@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content" >
+
+        <p:panel id="painelCentral">
+            <h:form id="formCart">
+                <p:focus context="formCart" for="carteira"/>
+                <!--<p:commandLink value="Acessar" action="/admin/index.xhtml" style="float: right;"/>-->
+                <h:panelGrid columns="3" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="carteira" value="Carteira do Sesc: "/>
+                    <p:inputText id="carteira" value="#{controleAcessoBean.carteira}" label="Carteira do Sesc" onkeypress="return SomenteNumero(event)" maxlength="12" />
+                    <p:commandButton id="btnBuscar" update=":painelCentral" value="Buscar" icon="ui-icon-search" action="#{controleAcessoBean.pesquisaCliente()}" />
+                    <p:defaultCommand target="btnBuscar"/>
+                </h:panelGrid>
+            </h:form>
+
+            <p:panel id="painelExibicao" rendered="#{controleAcessoBean.cliente.carteira != null}">
+                <h:panelGrid columns="2" cellpadding="4" cellspacing="10">
+                    <p:graphicImage value="/resources/imgs/tmp/#{controleAcessoBean.cliente.mat}.jpg" cache="false"/>
+                    <h:panelGrid columns="1" cellpadding="4" cellspacing="10" >
+                        <h:outputText value="Carteira: " style="font-size: 20px;"/>
+                        <h:outputText value="#{controleAcessoBean.cliente.carteira}" style="font-weight:bold; font-size: 25px;"/>
+
+                        <h:outputText value="Nome: " style="font-size: 20px;"/>
+                        <h:outputText value="#{controleAcessoBean.cliente.nome}" style="font-weight:bold;  font-size: 25px;"/>
+
+                        <h:outputText value="Vencimento da Carteira: " style="font-size: 20px;"/>
+                        <h:outputText value="#{controleAcessoBean.cliente.dataVencimento}" style="font-weight:bold;  font-size: 25px;">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <p:dataList value="#{controleAcessoBean.atividades}" var="a" emptyMessage="Não está inscrita em nenhuma atividade">
+                    <f:facet name="header">
+                        Atividades
+                    </f:facet>
+                    #{a}
+                </p:dataList>
+            </p:panel>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

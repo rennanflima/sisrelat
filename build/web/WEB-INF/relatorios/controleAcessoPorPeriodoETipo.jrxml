@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="inscritosTurma" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="565" leftMargin="15" rightMargin="15" topMargin="20" bottomMargin="20" uuid="f60f60c9-be59-48b7-b9c8-80d0617db524">
 	<property name="ireport.zoom" value="1.1269722013523664"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.y" value="1968"/>
 	<parameter name="logo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT 	CF.MATFORMAT,
@@ -82,7 +82,7 @@ FROM CLIENTELA C INNER JOIN PACTOACESSO PA ON C.CDUOP = PA.CDUOP AND C.SQMATRIC 
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="18" isBold="true"/>
 				</textElement>
-				<text><![CDATA[do Colaborador]]></text>
+				<text><![CDATA[e Tipo]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -191,7 +191,7 @@ FROM CLIENTELA C INNER JOIN PACTOACESSO PA ON C.CDUOP = PA.CDUOP AND C.SQMATRIC 
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total de Inscritos:]]></text>
+				<text><![CDATA[Total de acessos:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="92" y="15" width="100" height="20" uuid="2343331c-e475-4fbb-bc3f-fe97d055b6a1"/>
@@ -213,7 +213,7 @@ FROM CLIENTELA C INNER JOIN PACTOACESSO PA ON C.CDUOP = PA.CDUOP AND C.SQMATRIC 
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="18" isBold="true"/>
 				</textElement>
-				<text><![CDATA[do Colaborador]]></text>
+				<text><![CDATA[e Tipo]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="310" width="564" height="20" uuid="f7ed58f0-6ffb-4d72-8ae0-dce5a25e5948"/>

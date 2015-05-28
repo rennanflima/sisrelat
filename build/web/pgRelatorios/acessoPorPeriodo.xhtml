@@ -16,14 +16,14 @@
             <h:form id="filtroAcessoPorPeriodo">
                 <h:panelGrid id="filtro" columns="2" cellpadding="4" cellspacing="10">
                     <p:outputLabel for="dtInicio" value="Data de Início:"/>
-                    <p:calendar id="dtInicio" locale="pt" label="Data de Início" value="#{acessoPorPeriodo.dtInicio}"
-                                pattern="dd/MM/yyyy HH:mm:ss" immediate="true">
+                    <p:calendar id="dtInicio" locale="pt" label="Data de Início" value="#{acessoPorPeriodo.dtInicio}" navigator="true"
+                                pattern="dd/MM/yyyy HH:mm:ss" immediate="true" showButtonPanel="true">
                         <p:ajax update="dtTermino" event="dateSelect"/>
                     </p:calendar>
 
                     <p:outputLabel for="dtTermino" value="Data de Término:"/>
-                    <p:calendar id="dtTermino" locale="pt" label="Data de Término" value="#{acessoPorPeriodo.dtTermino}"
-                                mindate="#{acessoPorPeriodo.dtInicio}" pattern="dd/MM/yyyy HH:mm:ss" immediate="true"/>
+                    <p:calendar id="dtTermino" locale="pt" label="Data de Término" value="#{acessoPorPeriodo.dtTermino}" navigator="true"
+                                mindate="#{acessoPorPeriodo.dtInicio}" pattern="dd/MM/yyyy HH:mm:ss" immediate="true" showButtonPanel="true"/>
                 </h:panelGrid>
                 <br/>
                 <div style="float: right;">

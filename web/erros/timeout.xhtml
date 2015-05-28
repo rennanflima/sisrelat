@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./../templates/template.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <p:dialog id="login" visible="true" closable="false" draggable="false" resizable="false" style="width: 400px;" >
+            <f:facet name="header">
+                <h:outputText value="Sessão Expirada" style="font-size: 18px"/>
+            </f:facet>
+            <div style="float: left">
+                <p:graphicImage value="/resources/imgs/cadeado.png" style="height: 170px"/>
+            </div>
+            <div style="float: right">
+                <h:form>
+                    <br />
+                    <br />
+                    <p style="text-align: justify"><h:outputText value="A sua sessão expirou, provavelmente devido a" style="font-size: 16px"/>
+                        <br />
+                        <h:outputText value=" inatividade." style="font-size: 16px"/>
+                    </p>
+                    <br/>
+                    <p style="text-align: justify"><h:outputText value="Para continuar acessando o sistema, por favor" style="font-size: 16px"/>
+                        <br />
+                        <h:outputText value=" efetue o " style="font-size: 16px"/>
+                        <p:commandLink value="login" action="../login.xhtml" style="font-size: 16px"/>
+                        <h:outputText value=" novamente" style="font-size: 16px"/>
+                    </p>
+                </h:form>
+            </div>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

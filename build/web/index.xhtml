@@ -1,13 +1,38 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./templates/newTemplate.xhtml"
+                template="/templates/templateLogin.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags">
 
     <ui:define name="content">
-        <h1 style="text-align: center">Bem Vindo ao SistRelat</h1>
-        <h2 style="text-align: center">Sistema de Relatórios e Faltas</h2>
+        <p:dialog id="login" header="Login" visible="true" closable="false" draggable="false" resizable="false" style="font-size: 12px;">
+            <p:focus context="login"/>
+            <p:spacer height="3"/>
+            <div style="text-align: center;">
+                <p:panel rendered="#{param.erro}" style="border: none;">
+                    <h:outputText value="#{trocaSenhaBean.mensagens(SPRING_SECURITY_LAST_EXCEPTION)}" rendered="#{param.erro}" style="color: darkred; font-weight:bold;"/>
+                    <p:spacer height="3"/>
+                </p:panel>
+            </div>
+            <form action="j_spring_security_check" method="post">
+                <h:panelGrid columns="2" cellpadding="4" cellspacing="7" style="font-weight: bold; font-size: 12px;">
+                    <p:outputLabel for="j_username" value="Usuário: " /> 
+                    <p:inputText id="j_username" required="true" label="Usuário" size="40"/>
+                    <p:outputLabel for="j_password" value="Senha: " />
+                    <p:password id="j_password" required="true" label="Senha" size="40"/>
+                </h:panelGrid>
+                <div style="float: right">
+                    <p:spacer height="30"/>
+                    <a href="/sisrelat/recuperaSenha.xhtml" class="ui-commandlink">Esqueci a senha</a>
+                    <p:spacer width="10"/>
+                    <h:commandButton styleClass="login" value="Entrar" />
+                </div>
+            </form>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

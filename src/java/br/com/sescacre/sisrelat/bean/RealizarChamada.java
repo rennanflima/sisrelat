@@ -33,7 +33,7 @@ import javax.faces.context.FacesContext;
 public class RealizarChamada implements Serializable {
 
     public static void turmasHorarioFixo(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, FacesContext msg) {
-        List<Chamada> chamada = new ArrayList<Chamada>();
+        List<Chamada> chamada = new ArrayList<>();
         YearMonth anoMes = YearMonth.of(ano, mes);
         for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
             LocalDate data = anoMes.atDay(dia);
@@ -70,7 +70,7 @@ public class RealizarChamada implements Serializable {
                 } else {
                     System.out.println("Tamanho da lista de chamada é maior: " + chamada.size());
                 }
-                chamada = new ArrayList<Chamada>();
+                chamada = new ArrayList<>();
             }
         }
         System.out.println("Termino da chamada: " + new Date());
@@ -80,7 +80,7 @@ public class RealizarChamada implements Serializable {
     }
 
     public static void turmaHorarioLivre(int ano, int mes, ProgramaCorrente progocor, List<Inscritos> inscritos, FacesContext msg) {
-        CopyOnWriteArrayList<Chamada> chamada = new CopyOnWriteArrayList<Chamada>();
+        CopyOnWriteArrayList<Chamada> chamada = new CopyOnWriteArrayList<>();
         YearMonth anoMes = YearMonth.of(ano, mes);
         LocalDateTime horaInicio = DateConverter.convertDateToLocalDateTime(progocor.getHoraInicio());
         LocalDateTime horaFim = DateConverter.convertDateToLocalDateTime(progocor.getHoraFim());
@@ -98,7 +98,7 @@ public class RealizarChamada implements Serializable {
                     if (insc.getSqMatric() == 10828) {//20860(ok) e 10828 
                         //pesquisa o acesso de um aluno na catraca
                         List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, progocor.getHoraInicio(), progocor.getHoraFim(), insc.getSqMatric());
-                        CopyOnWriteArrayList<Acesso> listaAcessoAluno = new CopyOnWriteArrayList<Acesso>();
+                        CopyOnWriteArrayList<Acesso> listaAcessoAluno = new CopyOnWriteArrayList<>();
                         //situaçao pensada para apenas uma entrada no dia
                         int contaEntradaDia = 0;
                         int contaSaidaDia = 0;
@@ -182,7 +182,7 @@ public class RealizarChamada implements Serializable {
                                     }
                                 }
                             }
-                            for (Acesso acesso : listaAcessoAluno) {
+                            listaAcessoAluno.stream().forEach((acesso) -> {
                                 if (acesso.getEntrada() != null) {
                                     if (acesso.getSaida() != null) {
                                         System.out.println(acesso.getEntrada().getDirecao() + " - " + acesso.getEntrada().getDataHora() + " / "
@@ -195,110 +195,105 @@ public class RealizarChamada implements Serializable {
                                         System.out.println("Sem Entrada / " + acesso.getSaida().getDirecao() + " - " + acesso.getSaida().getDataHora());
                                     }
                                 }
-                            }
+                            });
                             System.out.println();
                             System.out.println("--------------------------------------------");
                             System.out.println();
-                            List<Chamada> falta = new ArrayList<Chamada>();
-                            // LANÇAMENTO DA PRESENÇA E FALTA
-                            //percorre a lista de acesso do aluno por dia, podendo ter mais de um acesso
-                            for (Acesso acesso : listaAcessoAluno) {
-                                if (acesso.getEntrada() != null || acesso.getSaida() != null) {
-                                    //tem a entrada
-                                    if (acesso.getEntrada() != null) {
-                                        LocalDateTime entrada = DateConverter.convertDateToLocalDateTime(acesso.getEntrada().getDataHora());
-                                        //tem entrada e saida
-                                        if (acesso.getSaida() != null) {
-                                            LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
-                                            LocalDateTime temp = horaInicio;
-                                            //Loop enquanto a hora da temp for menor ou igual a hora de termino da atividade
-                                            while (temp.getHour() <= horaFim.getHour()) {
-                                                //temp entre a hora de entrada e a hora de saida
-                                                if (temp.getHour() >= entrada.getHour() && temp.getHour() <= saida.getHour()) {
-                                                    LocalDateTime tmp = entrada;
-                                                    //Loop enquanto a hora da tmp for menor ou igual a hora da saida
-                                                    while (tmp.getHour() <= saida.getHour()) {
-                                                        Chamada presenca = new Chamada();
-                                                        presenca.setSqmatric(insc.getSqMatric());
-                                                        presenca.setCduop(insc.getCdUop());
-                                                        presenca.setCdprograma(insc.getCdPrograma());
-                                                        presenca.setCdconfig(insc.getCdConfig());
-                                                        presenca.setSqocorrenc(insc.getSqOcorrenc());
-                                                        presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
-                                                        presenca.setLgatu("jcavalcant");
-                                                        presenca.setDtatu(new Date());
-                                                        presenca.setHratu(new Date());
-                                                        //se a tmp for depois que a hora de saida salva a hora da saida
-                                                        if (!tmp.isAfter(saida)) {
-                                                            presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(tmp));
-                                                        } else {
-                                                            presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
-                                                        }
-                                                        presenca.setVbfalta(true);
-                                                        if (!chamada.contains(presenca)) {
-                                                            chamada.add(presenca);
-                                                        }
-                                                        tmp = tmp.plusHours(1);
-                                                        temp = temp.plusHours(1);
+                            List<Chamada> falta = new ArrayList<>();
+                            listaAcessoAluno.stream().filter((acesso) -> (acesso.getEntrada() != null || acesso.getSaida() != null)).forEach((acesso) -> {
+                                if (acesso.getEntrada() != null) {
+                                    LocalDateTime entrada = DateConverter.convertDateToLocalDateTime(acesso.getEntrada().getDataHora());
+                                    //tem entrada e saida
+                                    if (acesso.getSaida() != null) {
+                                        LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
+                                        LocalDateTime temp = horaInicio;
+                                        //Loop enquanto a hora da temp for menor ou igual a hora de termino da atividade
+                                        while (temp.getHour() <= horaFim.getHour()) {
+                                            //temp entre a hora de entrada e a hora de saida
+                                            if (temp.getHour() >= entrada.getHour() && temp.getHour() <= saida.getHour()) {
+                                                LocalDateTime tmp = entrada;
+                                                //Loop enquanto a hora da tmp for menor ou igual a hora da saida
+                                                while (tmp.getHour() <= saida.getHour()) {
+                                                    Chamada presenca = new Chamada();
+                                                    presenca.setSqmatric(insc.getSqMatric());
+                                                    presenca.setCduop(insc.getCdUop());
+                                                    presenca.setCdprograma(insc.getCdPrograma());
+                                                    presenca.setCdconfig(insc.getCdConfig());
+                                                    presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                                    presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                                    presenca.setLgatu("jcavalcant");
+                                                    presenca.setDtatu(new Date());
+                                                    presenca.setHratu(new Date());
+                                                    //se a tmp for depois que a hora de saida salva a hora da saida
+                                                    if (!tmp.isAfter(saida)) {
+                                                        presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(tmp));
+                                                    } else {
+                                                        presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
                                                     }
-                                                    // temp fora do intevalo da entrada e saida, falta
-                                                } else {
-                                                    temp = temp.plusHours(1);
-                                                }
-                                            }
-                                            // tem só a entrada
-                                        } else {
-                                            LocalDateTime temp = horaInicio;
-                                            while (temp.getHour() <= horaFim.getHour()) {
-                                                Chamada presenca = new Chamada();
-                                                presenca.setSqmatric(insc.getSqMatric());
-                                                presenca.setCduop(insc.getCdUop());
-                                                presenca.setCdprograma(insc.getCdPrograma());
-                                                presenca.setCdconfig(insc.getCdConfig());
-                                                presenca.setSqocorrenc(insc.getSqOcorrenc());
-                                                presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
-                                                presenca.setLgatu("jcavalcant");
-                                                presenca.setDtatu(new Date());
-                                                presenca.setHratu(new Date());
-                                                if (temp.getHour() == entrada.getHour()) {
-                                                    presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(entrada));
                                                     presenca.setVbfalta(true);
                                                     if (!chamada.contains(presenca)) {
                                                         chamada.add(presenca);
                                                     }
-                                                } 
+                                                    tmp = tmp.plusHours(1); 
+                                                    temp = temp.plusHours(1);
+                                                }
+                                                // temp fora do intevalo da entrada e saida, falta
+                                            } else {
                                                 temp = temp.plusHours(1);
                                             }
                                         }
-                                        // nao tem a entrada
+                                        // tem só a entrada
                                     } else {
-                                        // só tem a saida
-                                        if (acesso.getSaida() != null) {
-                                            LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
-                                            LocalDateTime temp = horaInicio;
-                                            while (temp.getHour() <= horaFim.getHour()) {
-                                                Chamada presenca = new Chamada();
-                                                presenca.setSqmatric(insc.getSqMatric());
-                                                presenca.setCduop(insc.getCdUop());
-                                                presenca.setCdprograma(insc.getCdPrograma());
-                                                presenca.setCdconfig(insc.getCdConfig());
-                                                presenca.setSqocorrenc(insc.getSqOcorrenc());
-                                                presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
-                                                presenca.setLgatu("jcavalcant");
-                                                presenca.setDtatu(new Date());
-                                                presenca.setHratu(new Date());
-                                                if (temp.getHour() == saida.getHour()) {
-                                                    presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
-                                                    presenca.setVbfalta(true);
-                                                    if (!chamada.contains(presenca)) {
-                                                        chamada.add(presenca);
-                                                    }
+                                        LocalDateTime temp = horaInicio;
+                                        while (temp.getHour() <= horaFim.getHour()) {
+                                            Chamada presenca = new Chamada();
+                                            presenca.setSqmatric(insc.getSqMatric());
+                                            presenca.setCduop(insc.getCdUop());
+                                            presenca.setCdprograma(insc.getCdPrograma());
+                                            presenca.setCdconfig(insc.getCdConfig());
+                                            presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                            presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                            presenca.setLgatu("jcavalcant");
+                                            presenca.setDtatu(new Date());
+                                            presenca.setHratu(new Date());
+                                            if (temp.getHour() == entrada.getHour()) {
+                                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(entrada));
+                                                presenca.setVbfalta(true);
+                                                if (!chamada.contains(presenca)) {
+                                                    chamada.add(presenca);
+                                                }
+                                            }
+                                            temp = temp.plusHours(1);
+                                        }
+                                    }
+                                    // nao tem a entrada
+                                } else {
+                                    // só tem a saida
+                                    if (acesso.getSaida() != null) {
+                                        LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
+                                        LocalDateTime temp = horaInicio;
+                                        while (temp.getHour() <= horaFim.getHour()) {
+                                            Chamada presenca = new Chamada();
+                                            presenca.setSqmatric(insc.getSqMatric());
+                                            presenca.setCduop(insc.getCdUop());
+                                            presenca.setCdprograma(insc.getCdPrograma());
+                                            presenca.setCdconfig(insc.getCdConfig());
+                                            presenca.setSqocorrenc(insc.getSqOcorrenc());
+                                            presenca.setDtaula(DateConverter.convertLocalDateToDate(data));
+                                            presenca.setLgatu("jcavalcant");
+                                            presenca.setDtatu(new Date());
+                                            presenca.setHratu(new Date());
+                                            if (temp.getHour() == saida.getHour()) {
+                                                presenca.setHriniaula(DateConverter.convertLocalDateTimeToDate(saida));
+                                                presenca.setVbfalta(true);
+                                                if (!chamada.contains(presenca)) {
+                                                    chamada.add(presenca);
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }// fim for listaAcessoAluno - presença
+                            });
                             //falta
                             LocalDateTime temp = horaInicio;
                             while (temp.getHour() <= horaFim.getHour()) {
@@ -432,13 +427,13 @@ public class RealizarChamada implements Serializable {
 
         Collections.sort(listaC);
 
-        for (Chamada ch : listaC) {
+        listaC.stream().forEach((ch) -> {
             if (ch.isVbfalta()) {
                 System.out.println(ch.getSqmatric() + " - " + ch.getDtaula() + " - " + ch.getHriniaula() + " - P");
             } else {
                 System.out.println(ch.getSqmatric() + " - " + ch.getDtaula() + " - " + ch.getHriniaula() + " - F");
             }
-        }
+        });
 
         System.out.println();
         System.out.println("--------------------------------------------");

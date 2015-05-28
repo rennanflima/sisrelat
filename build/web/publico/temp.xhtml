@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <!-- Redireciona Usuário para uma Área de Trabalho conforme sua Permissão -->
+        <f:metadata>  
+            <f:event type="preRenderView" listener="#{usuarioBean.redirecionaUser()}"/>  
+        </f:metadata>
+    </ui:define>
+
+</ui:composition>

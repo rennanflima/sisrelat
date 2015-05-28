@@ -76,8 +76,8 @@
                     </p:selectOneMenu>
 
                     <p:outputLabel for="mes" value="Mês:"/>
-                    <p:calendar id="mes" locale="pt" label="Mês" value="#{selecaoBean.dataChamada}" required="true"
-                                mindate="#{selecaoBean.dataChamada}" pattern="MM/yyyy" immediate="true"/>
+                    <p:calendar id="mes" locale="pt" label="Mês" value="#{selecaoBean.dataChamada}" required="true" navigator="true"
+                                pattern="MM/yyyy" immediate="true"/>
                 </h:panelGrid>
                 <div style="float: right;">
                     <p:commandButton value="Realizar Chamada" update="filtroChamada, :filtroChamada:aviso" action="#{selecaoBean.realizaChamada()}" immediate="false" />

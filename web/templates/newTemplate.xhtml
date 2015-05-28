@@ -4,18 +4,19 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <h:outputStylesheet name="./css/default.css"/>
-        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <link href="${facesContext.externalContext.requestContextPath}/resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="${facesContext.externalContext.requestContextPath}/resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
             PrimeFaces.locales['pt'] = {
                 closeText: 'OK',
                 prevText: 'Anterior',
                 nextText: 'Próximo',
-                currentText: 'Começo',
+                currentText: 'Hoje',
                 monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
                 monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Des'],
                 dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
@@ -31,8 +32,7 @@
                 hourText: 'Hora',
                 minuteText: 'Minuto',
                 secondText: 'Segundo',
-                currentText: 'Hora Atual',
-                        ampm: false,
+                ampm: false,
                 month: 'Mês',
                 week: 'Semana',
                 day: 'Dia',
@@ -43,16 +43,29 @@
     </h:head>
 
     <h:body>
-
+        <div style="text-align: right;">
+            <h:outputText value="#{usuarioBean.usuario.login} " />
+            <p:graphicImage alt="Segurança" style="border: none" value="/resources/imgs/icon_cristal_key.png"/>
+            <a href="#{facesContext.externalContext.requestContextPath}/j_spring_security_logout"> Sair</a>
+        </div>
         <div id="top">
             <p:graphicImage value="/resources/imgs/logo.png" width="100%"/>
         </div>
         <div>
             <h:form>
                 <p:menubar>
-                    <p:menuitem value="Início" url="/index.xhtml" />
-                    <p:menuitem value="Realizar Chamada" url="/servicos/chamada.xhtml" />
-                    <p:menuitem value="Buscar Cliente" url="/servicos/buscarCliente.xhtml" />
+                    <sec:ifAnyGranted roles="ROLE_GER">
+                        <p:menuitem value="Início" url="/admin/index.xhtml" />
+                    </sec:ifAnyGranted>
+                    <p:submenu label="Cadastros">
+                        <p:menuitem value="Funcionários" url="/admin/funcionarios.xhtml" icon="ui-icon-contact"/>
+                        <p:menuitem value="Setores" url="/admin/setores.xhtml" icon="ui-icon-contact"/>
+                        <p:menuitem value="Cargos" url="/admin/cargos.xhtml" icon="ui-icon-contact"/>
+                    </p:submenu>
+                    <p:submenu label="Serviços">
+                        <p:menuitem value="Realizar Chamada" url="/servicos/chamada.xhtml" />
+                        <p:menuitem value="Buscar Cliente" url="/servicos/buscarCliente.xhtml" />
+                    </p:submenu>
                     <p:submenu label="Relatórios">
                         <p:submenu label="Acesso da Catraca">
                             <p:menuitem value="Cliente Por Período" url="/pgRelatorios/acessoPorPeriodoDoCliente.xhtml" />
@@ -60,6 +73,9 @@
                             <p:menuitem value="Por Período e Tipo de Cliente" url="/pgRelatorios/acessoPeriodoTipo.xhtml" />
                         </p:submenu>
                         <p:menuitem value="Inscritos da Turma" url="/pgRelatorios/inscritosTurma.xhtml" />
+                    </p:submenu>
+                    <p:submenu label="Segurança">
+                        <p:menuitem value="Trocar Senha" oncomplete="redefinir.show()" icon="ui-icon-gear"/>
                     </p:submenu>
                 </p:menubar>
             </h:form>
@@ -73,6 +89,39 @@
                 <br/>
                 Serviço Social do Comércio - Sesc-DR/AC</p>
         </div>
+        
+        
+        <h:form id="growlMsg">
+            <p:growl id="aviso" life="5000"/>
+        </h:form>
+
+        <p:dialog widgetVar="redefinir" header="Redefinir Senha" visible="false" draggable="false" resizable="false" modal="true">
+            <h:form id="trocaSenha">
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="oldSenha" value="Senha Antiga: "/>
+                    <p:password id="oldSenha" value="#{trocaSenhaBean.oldSenha}" required="true" label="Senha Antiga" maxlength="45" size="40"
+                                requiredMessage="O campo 'Senha Antiga' é obrigatório"/>
+
+                    <p:outputLabel for="senha" value="Digite uma nova senha: "/>
+                    <p:password id="senha" value="#{trocaSenhaBean.senha}" feedback="true" inline="true"  maxlength="45" size="40"
+                                promptLabel="Por favor, digite uma senha!" weakLabel="Fraca"
+                                goodLabel="Boa" strongLabel="Forte" match="confirmaSenha" label="Digite uma nova senha" required="true"
+                                validatorMessage="As senhas não correspondem" requiredMessage="O campo 'Digite uma nova senha' é obrigatório"/>
+                    <p:outputLabel for="confirmaSenha" value="Confirme a senha: "/>
+                    <p:password id="confirmaSenha" label="Confirme a senha" required="true" maxlength="45" size="40"
+                                requiredMessage="O campo 'Confirme a senha' é obrigatório"/>
+                </h:panelGrid>
+                <br />
+                <div style="float: left; font-size: 11px; font-weight:bold">
+                    * Campos obrigatórios
+                </div>
+                <div style="float: right">
+                    <p:commandButton update="trocaSenha, :growlMsg:aviso" value="Salvar" action="#{trocaSenhaBean.alteraSenha}"/>
+                    <p:commandButton update="trocaSenha" value="Limpar" action="#{trocaSenhaBean.limpar()}" immediate="true" process="@this"/>
+                </div>
+            </h:form>
+            <p:ajax event="close" update="trocaSenha" listener="#{trocaSenhaBean.limpar()}"/>
+        </p:dialog>
 
     </h:body>
 

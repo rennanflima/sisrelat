@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <!-- Modal de Aguarde... -->
+        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
+                  draggable="false" closable="false" resizable="false">  
+            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
+        </p:dialog>
+
+        <p:fieldset legend="Cadastro de Cargos">
+            <h:form id="formCargos">
+                <p:growl id="aviso" life="5000" />
+
+                <br />
+                <br />
+                <!-- Botão Novo -->
+                <p:commandButton value="Novo Cargos" icon="ui-icon-document" action="#{cargosBean.limpar()}" 
+                                 oncomplete="inserir.show()"/>
+                <br />
+                <br />
+
+                <!-- Tabela de Exibição -->
+                <p:dataTable id="tabelaCargos" value="#{cargosBean.cargos}" var="c" rows="5" paginator="true"
+                             paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} 
+                             {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="{totalRecords} Reg./Pág. {currentPage} de {totalPages}"
+                             rowsPerPageTemplate="5,10,15" widgetVar="pilarTable" 
+                             emptyMessage="Não foram encontrados Cargos cadastrados" >
+
+                    <f:facet name="header">  
+                        <h:outputText value="LISTA DE CARGOS" />  
+                    </f:facet>
+
+                    <p:column style="width: 18px">
+                        <p:commandLink id="deta" update=":detCargo" oncomplete="detalhes.show()">
+                            <p:graphicImage alt="Detalhamento" style="border: none" value="/resources/imgs/search.png"/>
+                            <f:setPropertyActionListener value="#{c}" target="#{cargosBean.cargo}"/>
+                        </p:commandLink>
+                        <p:tooltip for="deta" value="Exibe o detalhamento do Cargo" showEffect="fade" hideEffect="fade"/>
+                    </p:column>
+
+                    <p:column id="nomeColuna" sortBy="#{c.nome}">
+                        <f:facet name="header">
+                            <h:outputText value="NOME"/>
+                        </f:facet>
+                        #{c.nome}
+                    </p:column>
+
+                    <p:column style="width: 200px;">
+                        <f:facet name="header">
+                            <h:outputText value="AÇÕES"/>
+                        </f:facet>
+                        <center>
+                            <p:commandButton value="Editar" icon="ui-icon-pencil" oncomplete="inserir.show()" action="#{cargosBean.carregaListaSetores()}"
+                                             update=":cadastroC">
+                                <f:setPropertyActionListener value="#{c}" target="#{cargosBean.cargo}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Excluir" icon="ui-icon-trash" oncomplete="confirmation.show()">
+                                <f:setPropertyActionListener value="#{c}" target="#{cargosBean.cargo}"/>
+                            </p:commandButton>
+                        </center>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:fieldset>
+
+        <!-- Caixa de Confirmação de Exclusão -->
+        <p:confirmDialog id="confirmDialog" message="Tem certeza que deseja excluir ?"  
+                         header="Confirmação de exclusão" severity="alert" widgetVar="confirmation" closable="false">  
+            <h:form>
+                <p:commandButton id="confirm" value="Sim" oncomplete="confirmation.hide()"  
+                                 action="#{cargosBean.excluir()}" update=":formCargos:tabelaCargos, :formCargos:aviso">
+                </p:commandButton>  
+                <p:commandButton id="decline" value="Não" onclick="confirmation.hide()" action="#{cargosBean.limpar()}"/>   
+            </h:form>
+        </p:confirmDialog>
+
+        <!-- Modal do Formulário -->
+        <p:dialog widgetVar="inserir" header="Inserir Cargos" resizable="false" modal="true">
+            <h:form id="cadastroC">
+                <h:inputHidden value="#{cargosBean.cargo.idCargo}"/>
+                <p:growl id="aviso2" life="5000"/>
+                <h:panelGrid columns="3" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="nome" value="Nome: "/>
+                    <p:inputText id="nome" required="true" value="#{cargosBean.cargo.nome}" label="Nome" size="80" maxlength="60"
+                                 requiredMessage="O campo 'Nome' é obrigatório"
+                                 validatorMessage="É permitido apenas letras no campo 'Nome'">
+                        <f:validateRegex pattern="([A-Za-zÀ-ú ]+)"/>
+                    </p:inputText>
+                    <p:message id="msgNome" for="nome" display="icon"/>
+
+                    <p:outputLabel for="setor" value="Setor(s): "/>
+                    <p:selectManyCheckbox id="setor" layout="grid" columns="3" value="#{cargosBean.setores}" required="true"
+                                          requiredMessage="O campo 'Setor(s)' é obrigatorio">
+                        <f:selectItems value="#{setoresBean.setores}" var="s"
+                                       itemLabel="#{s.sigla}" itemValue="#{s.idSetor}"/>
+                    </p:selectManyCheckbox>
+                </h:panelGrid>
+                <br />
+                <div style="float: left; font-size: 11px; font-weight:bold;">
+                    * Campos obrigatórios
+                </div>
+                <div style="float: right">
+                    <p:commandButton update=":formCargos:tabelaCargos, :formCargos:aviso, cadastroC" value="Salvar" icon="ui-icon-disk" action="#{cargosBean.salvar()}"/>
+                    <p:commandButton update="cadastroC" value="Limpar" action="#{cargosBean.limpar()}" immediate="true" process="@this"/>
+                </div>
+            </h:form>
+            <p:ajax event="close" update="cadastroC" listener="#{cargosBean.limpar()}"/>
+        </p:dialog>
+
+        <!-- Detalhamento do Pilar-->
+        <p:dialog id="det" widgetVar="detalhes" header="Detalhamento do Setor" 
+                  modal="true" resizable="false" showEffect="clip" hideEffect="fold">
+
+            <h:panelGrid id="detCargo" columns="2" cellpadding="4" cellspacing="10">
+
+                <h:outputText value="Nome: "/>
+                <h:outputText value="#{cargosBean.cargo.nome}" style="font-weight:bold"/>
+
+                <h:outputText value="Setor(s): "/>
+                <h:outputText value="#{cargosBean.msgSetores}" style="font-weight:bold"/>
+            </h:panelGrid>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

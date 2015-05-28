@@ -9,5 +9,10 @@
     <property name="hibernate.connection.password">root</property>
     
     <mapping class="br.com.sescacre.sisrelat.entidades.Chamada"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.Usuarios"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.Cargos"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.Setores"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.CargosDoSetor"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.Funcionarios"/>
   </session-factory>
 </hibernate-configuration>

@@ -1,0 +1,209 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <!-- Modal de Aguarde... -->
+        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
+                  draggable="false" closable="false" resizable="false">  
+            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
+        </p:dialog>
+        <p:fieldset legend="Cadastro de Funcionários">
+            <h:form id="formUsuario">
+                <p:growl id="aviso" life="5000"/>
+
+                <br/>
+                <br/>
+                <!-- Botão Novo -->
+                <p:commandButton value="Novo Funcionário" icon="ui-icon-document" action="#{funcionariosBean.limpar()}"
+                                 oncomplete="inserir.show()"/>
+                <br/>
+                <br/>
+                <!-- Tabela de Exibição -->
+                <p:dataTable id="tabelaUsuario" value="#{funcionariosBean.funcionarios}" 
+                             var="f" rows="5" paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} 
+                             {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" currentPageReportTemplate="{totalRecords} Reg./Pág. {currentPage} de {totalPages}" 
+                             rowsPerPageTemplate="5,10,15" widgetVar="usuarioTable" 
+                             emptyMessage="Não foram encontrados Funcionários cadastrados" >  
+
+                    <f:facet name="header">  
+                        <h:outputText value="LISTA DE FUNCIONÁRIOS" />  
+                    </f:facet>
+
+                    <p:column style="width: 18px">
+                        <p:commandLink id="deta" update=":detUsuario" oncomplete="detalhes.show()">
+                            <p:graphicImage alt="Detalhamento" style="border: none" value="/resources/imgs/search.png"/>
+                            <f:setPropertyActionListener value="#{f}" target="#{funcionariosBean.funcionario}"/>
+                        </p:commandLink>
+                        <p:tooltip for="deta" value="Exibe o detalhamento do Funcionário" showEffect="fade" hideEffect="fade"/>
+                    </p:column>
+
+                    <p:column sortBy="#{f.matricula}">
+                        <f:facet name="header">
+                            <h:outputText value="MATRÍCULA"/>
+                        </f:facet>
+                        #{f.matricula}
+                    </p:column>
+                    <p:column sortBy="#{f.nome}" filterBy="#{f.nome}" filterStyle="width: 170px;" filterMatchMode="startsWith">
+                        <f:facet name="header">
+                            <h:outputText value="NOME"/>
+                        </f:facet>
+                        #{f.nome}
+                    </p:column>
+                    <p:column width="160">
+                        <f:facet name="header">
+                            <h:outputText value="E-MAIL"/>
+                        </f:facet>
+                        #{f.email}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="SETOR"/>
+                        </f:facet>
+                        #{f.setor.sigla}
+                    </p:column>
+                    <p:column width="160">
+                        <f:facet name="header">
+                            <h:outputText value="AÇÕES"/>
+                        </f:facet>
+                        <center>
+                            <p:commandButton value="Editar" icon="ui-icon-pencil" oncomplete="inserir.show()"
+                                             update=":cadastroUsuario">
+                                <f:setPropertyActionListener value="#{f}" target="#{funcionariosBean.funcionario}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Excluir" icon="ui-icon-trash" oncomplete="confirmation.show()">
+                                <f:setPropertyActionListener value="#{f}" target="#{funcionariosBean.funcionario}"/>
+                            </p:commandButton>
+                        </center>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+            </h:form>
+        </p:fieldset>
+
+        <!-- Caixa de Confirmação de Exclusão -->
+        <p:confirmDialog id="confirmDialog" message="Tem certeza que deseja excluir ?"  
+                         header="Confirmação de exclusão" severity="alert" widgetVar="confirmation" closable="false">  
+            <h:form>
+                <p:commandButton id="confirm" value="Sim" oncomplete="confirmation.hide()"  
+                                 action="#{funcionariosBean.excluir()}" update=":formUsuario:tabelaUsuario, :formUsuario:aviso">
+                </p:commandButton>  
+                <p:commandButton id="decline" value="Não" onclick="confirmation.hide()" type="button" />   
+            </h:form>
+        </p:confirmDialog>
+
+        <!-- Modal do Formulário -->
+        <p:dialog widgetVar="inserir" header="Inserir Funcionário" resizable="false" modal="true">
+            <h:form id="cadastroUsuario">
+                <h:inputHidden value="#{funcionariosBean.funcionario.idFuncionarios}"/>
+                <p:growl id="aviso2" life="5000"/>
+                <h:panelGrid columns="3" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="mat" value="Matrícula: "/>
+                    <p:inputText id="mat" required="true" value="#{funcionariosBean.funcionario.matricula}" label="Matrícula" size="10"
+                                 onkeypress="return SomenteNumero(event)" requiredMessage="O campo 'Matrícula' é obrigatório"
+                                 converterMessage="Digite apenas número na Matrícula!" validatorMessage="O campo 'Matrícula' deve conter no mínimo dois digitos">
+                        <f:validateLength minimum="2" /> 
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+                    <p:message id="msgMat" for="mat" display="icon"/>
+
+                    <p:outputLabel for="nome" value="Nome: "/>
+                    <p:inputText id="nome" required="true" value="#{funcionariosBean.funcionario.nome}" label="Nome" size="60" maxlength="60"
+                                 requiredMessage="O campo 'Nome' é obrigatório"
+                                 validatorMessage="É permitido apenas letras no campo 'Nome'">
+                        <f:validateRegex pattern="([A-Za-zÀ-ú ]+)"/>
+                    </p:inputText>
+                    <p:message id="msgNome" for="nome" display="icon"/>
+
+                    <p:outputLabel for="email" value="E-mail: "/>
+                    <p:inputText id="email" required="true" value="#{funcionariosBean.funcionario.email}" label="E-mail" size="50" maxlength="40"
+                                 validatorMessage="O email digitado não é válido!" requiredMessage="O campo 'E-mail' é obrigatório">
+                        <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
+                    </p:inputText>
+                    <p:message id="msgEmail" for="email" display="icon"/>
+
+                    <p:outputLabel for="setor" value="Setor: "/>
+                    <p:selectOneMenu id="setor" required="true" value="#{funcionariosBean.idSetor}" 
+                                     immediate="true" requiredMessage="O campo 'Setor' é obrigatório" filter="true" filterMatchMode="startsWith">
+                        <f:selectItem itemLabel="Selecione um Setor..." itemValue="" /> 
+                        <f:selectItems value="#{setoresBean.setores}" var="s"
+                                       itemLabel="#{s.sigla}" itemValue="#{s.idSetor}" />
+                        <p:ajax update="cargo"/>
+                    </p:selectOneMenu>
+                    <p:message id="msgSetor" for="setor" display="icon"/>
+
+                    <p:outputLabel for="cargo" value="Cargo: "/>
+                    <p:selectOneMenu id="cargo" required="true" value="#{funcionariosBean.idCargo}" 
+                                     immediate="true" requiredMessage="O campo 'Cargo' é obrigatório" filter="true" filterMatchMode="startsWith">
+                        <f:selectItem itemLabel="Selecione um Cargo..." itemValue="" /> 
+                        <f:selectItems value="#{funcionariosBean.cargosDoSetor}" var="c"
+                                       itemLabel="#{c.cargo.nome}" itemValue="#{c.cargo.idCargo}" />
+                    </p:selectOneMenu>
+                    <p:message id="msgCargo" for="cargo" display="icon"/>
+
+                    <p:outputLabel for="login" value="Usuário: "/>
+                    <p:inputText id="login" required="true" value="#{(funcionariosBean.funcionario.idFuncionarios != null) ? funcionariosBean.funcionario.user.login : funcionariosBean.login}" 
+                                 disabled="#{(funcionariosBean.funcionario.idFuncionarios != null) ? true : false}" label="Login" size="30" maxlength="20"
+                                 requiredMessage="O campo 'Login' é obrigatório">
+                    </p:inputText>
+                    <p:message id="msgLogin" for="login" display="icon"/>                    
+
+                    <p:outputLabel for="autorizacao" value="Permissão: "/>
+                    <p:selectOneRadio id="autorizacao" required="true" value="#{funcionariosBean.permissao}" label="Permissao"
+                                      immediate="true" requiredMessage="O campo 'Permissão' é obrigatório">
+                        <f:selectItem itemLabel="Técnico" itemValue="ROLE_TEC"/>
+                        <f:selectItem itemLabel="Administrador" itemValue="ROLE_GER"/>
+                    </p:selectOneRadio>
+                    <p:message id="msgPer" for="autorizacao" display="icon"/>
+                </h:panelGrid>
+                <br />
+                <div style="float: left; font-size: 11px; font-weight:bold;">
+                    * Campos obrigatórios
+                </div>
+                <div style="float: right">
+                    <p:commandButton update=":formUsuario:tabelaUsuario, :formUsuario:aviso, cadastroUsuario" value="Salvar" icon="ui-icon-disk" action="#{funcionariosBean.salvar}"/>
+                    <p:commandButton update="cadastroUsuario" value="Limpar" action="#{funcionariosBean.limpar()}" immediate="true" process="@this"/>
+                </div>
+            </h:form>
+            <p:ajax event="close" update="cadastroUsuario" listener="#{funcionariosBean.limpar()}"/>
+        </p:dialog>
+
+        <!-- Detalhamento do Usuario -->
+        <p:dialog id="det" widgetVar="detalhes" header="Detalhamento do Funcionário"
+                  modal="true" resizable="false" showEffect="clip" hideEffect="fold">
+
+            <h:panelGrid id="detUsuario" columns="2" cellpadding="4" cellspacing="10">
+
+                <h:outputText value="Matrícula: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.matricula}" style="font-weight:bold"/>
+
+                <h:outputText value="Nome: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.nome}" style="font-weight:bold"/>
+
+                <h:outputText value="E-mail: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.email}" style="font-weight:bold"/>
+
+                <h:outputText value="Setor: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.setor.sigla}" style="font-weight:bold"/>
+
+                <h:outputText value="Cargo: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.cargo.nome}" style="font-weight:bold"/>
+
+                <h:outputText value="Usuário: "/>
+                <h:outputText value="#{funcionariosBean.funcionario.user.login}" style="font-weight:bold"/>
+
+                <h:outputText value="Nível de Permissão: "/>
+                <h:outputText value="#{funcionariosBean.listaPermissao()}" style="font-weight:bold"/>
+            </h:panelGrid>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

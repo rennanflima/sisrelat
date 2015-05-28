@@ -60,4 +60,19 @@
   text-decoration : underline;
 }
 
+.login {
+    background: repeat-x 50% 50% #DCEBF7;
+    border: 1px solid #77D5F7;
+    color: #1D5987;
+    cursor: pointer;
+    padding: 0.4em 1em;
+    border-radius: 5px 5px 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    
+}
 
+.corpoLogin{
+   min-height: 65%;
+}

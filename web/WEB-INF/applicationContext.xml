@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+    <!-- data source -->
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost/chamada" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+    </bean>
+
+            
+    <!-- configuracao das paginas  -->
+    <sec:http auto-config="true" access-denied-page="/publico/negado.xhtml">
+        <sec:form-login login-page="/index.xhtml" 
+                        authentication-failure-url="/index.xhtml?erro=true" default-target-url="/publico/temp.xhtml" always-use-default-target="false" />
+        <sec:logout invalidate-session="true" logout-success-url="/index.xhtml"/>
+        <sec:intercept-url pattern="/servicos/**" access="ROLE_TEC, ROLE_GER" />
+        <sec:intercept-url pattern="/admin/**" access="ROLE_GER" />
+        <sec:intercept-url pattern="/publico/**" access="ROLE_SCA, ROLE_GER" />
+        <sec:intercept-url pattern="/pgRelatorios/**" access="ROLE_TEC, ROLE_GER" />
+        <sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:session-management session-fixation-protection="migrateSession" session-authentication-error-url="/index.xhtml">
+            <sec:concurrency-control max-sessions="1" expired-url="/erros/timeout.xhtml" error-if-maximum-exceeded="true" />
+        </sec:session-management>
+    </sec:http>
+    
+      
+    
+    <!-- como vai ser a autenticacao -->
+    <sec:authentication-manager>
+        <sec:authentication-provider>
+            <sec:password-encoder hash="sha"/>
+            <sec:jdbc-user-service data-source-ref="dataSource"
+                                   users-by-username-query="SELECT usuario, senha, 'true' as enable FROM Usuarios WHERE usuario=?"
+                                   authorities-by-username-query="SELECT usuario, autorizacao FROM Usuarios WHERE usuario=?" />
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+    
+</beans>

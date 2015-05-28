@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <f:view contentType="text/html"/>
+        <link href="${facesContext.externalContext.requestContextPath}/resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="${facesContext.externalContext.requestContextPath}/resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Sistema de Controle de Acesso</title>
+    </h:head>
+
+    <h:body>
+        <div id="top">
+            <p:graphicImage value="/resources/imgs/logo.png" width="100%"/>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">
+            </ui:insert>
+        </div>
+        <div id="bottom">
+            <p>Copyright© 2014-2015 - Todos os Direitos Reservados
+                <br/>
+                Serviço Social do Comércio - Sesc-DR/AC</p>
+
+        </div>
+    </h:body>
+</html>

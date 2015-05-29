@@ -6,13 +6,15 @@
 
 package br.com.sescacre.sisrelat.entidades;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
  * @author Rennan Francisco
  */
-public class PactoAcesso {
+public class PactoAcesso implements Serializable {
     
     private String matFormat;
     private String nmCliente;
@@ -58,5 +60,43 @@ public class PactoAcesso {
 
     public void setDataHora(Date dataHora) {
         this.dataHora = dataHora;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.matFormat);
+        hash = 97 * hash + Objects.hashCode(this.nmCliente);
+        hash = 97 * hash + Objects.hashCode(this.tipo);
+        hash = 97 * hash + Objects.hashCode(this.direcao);
+        hash = 97 * hash + Objects.hashCode(this.dataHora);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PactoAcesso other = (PactoAcesso) obj;
+        if (!Objects.equals(this.matFormat, other.matFormat)) {
+            return false;
+        }
+        if (!Objects.equals(this.nmCliente, other.nmCliente)) {
+            return false;
+        }
+        if (!Objects.equals(this.tipo, other.tipo)) {
+            return false;
+        }
+        if (!Objects.equals(this.direcao, other.direcao)) {
+            return false;
+        }
+        if (!Objects.equals(this.dataHora, other.dataHora)) {
+            return false;
+        }
+        return true;
     }
 }

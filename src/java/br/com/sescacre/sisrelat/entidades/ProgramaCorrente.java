@@ -6,20 +6,18 @@
 
 package br.com.sescacre.sisrelat.entidades;
 
-import java.util.Date;
+import java.io.Serializable;
 
 
 /**
  *
  * @author Rennan Francisco
  */
-public class ProgramaCorrente {
+public class ProgramaCorrente implements Serializable{
     private Long configuracaoPrograma;
     private Long sequenciaOcorrencia;
     private Long programa;
     private String descricao;
-    private Date horaInicio;
-    private Date horaFim;
 
     public Long getConfiguracaoPrograma() {
         return configuracaoPrograma;
@@ -52,22 +50,4 @@ public class ProgramaCorrente {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
-    public Date getHoraInicio() {
-        return horaInicio;
-    }
-
-    public void setHoraInicio(Date horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public Date getHoraFim() {
-        return horaFim;
-    }
-
-    public void setHoraFim(Date horaFim) {
-        this.horaFim = horaFim;
-    }
-    
-    
 }

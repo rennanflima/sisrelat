@@ -5,11 +5,13 @@
  */
 package br.com.sescacre.sisrelat.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Rennan Francisco
  */
-public class Inscritos {
+public class Inscritos implements Serializable {
 
     private String matFormat;
     private Long sqMatric;

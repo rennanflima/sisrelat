@@ -6,11 +6,13 @@
 
 package br.com.sescacre.sisrelat.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Rennan Francisco
  */
-public class ConfiguracaoPrograma {
+public class ConfiguracaoPrograma implements Serializable {
     private Long codigo;
     private Long programa;
     private String nome;

@@ -6,11 +6,13 @@
 
 package br.com.sescacre.sisrelat.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Rennan Francisco
  */
-public class UnidadeOperacional {
+public class UnidadeOperacional implements Serializable{
 
     private Long codigo;
     private String nome; 

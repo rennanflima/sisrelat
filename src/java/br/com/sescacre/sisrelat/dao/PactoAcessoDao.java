@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class PactoAcessoDao {
         return rs;
     }
     
-    public List<PactoAcesso> acessoDoDia (LocalDate dia, java.util.Date hrinicio, java.util.Date hrfim) {
+    public List<PactoAcesso> acessoDoDia (LocalDate dia, LocalTime hrinicio, LocalTime hrfim) {
         Conexao con = new Conexao();
         List<PactoAcesso> lista = new ArrayList<PactoAcesso>();
         try {
@@ -104,7 +105,7 @@ public class PactoAcessoDao {
         return lista;
     }
     
-    public List<PactoAcesso> acessoDoDiaAluno (LocalDate dia, java.util.Date hrinicio, java.util.Date hrfim, Long sqmatric) {
+    public List<PactoAcesso> acessoDoDiaAluno (LocalDate dia, LocalTime hrinicio, LocalTime hrfim, Long sqmatric) {
         Conexao con = new Conexao();
         List<PactoAcesso> lista = new ArrayList<PactoAcesso>();
         try {
@@ -144,7 +145,7 @@ public class PactoAcessoDao {
         return lista;
     }
     
-        public ResultSet acessoPorPeriodoDoCliente(Connection conn, Date dtInicio, Date dtTermino, String sqmatric) {
+    public ResultSet acessoPorPeriodoDoCliente(Connection conn, Date dtInicio, Date dtTermino, String sqmatric) {
         ResultSet rs = null;
         try {
             PreparedStatement ps = conn.prepareStatement(

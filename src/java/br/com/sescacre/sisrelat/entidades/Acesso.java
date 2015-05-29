@@ -6,11 +6,14 @@
 
 package br.com.sescacre.sisrelat.entidades;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  *
  * @author Rennan Francisco
  */
-public class Acesso {
+public class Acesso implements Serializable {
 
     private PactoAcesso entrada = new PactoAcesso();
     private PactoAcesso saida = new PactoAcesso();
@@ -29,6 +32,32 @@ public class Acesso {
 
     public void setSaida(PactoAcesso saida) {
         this.saida = saida;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.entrada);
+        hash = 71 * hash + Objects.hashCode(this.saida);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Acesso other = (Acesso) obj;
+        if (!Objects.equals(this.entrada, other.entrada)) {
+            return false;
+        }
+        if (!Objects.equals(this.saida, other.saida)) {
+            return false;
+        }
+        return true;
     }
     
 }

@@ -6,26 +6,35 @@
 package br.com.sescacre.sisrelat.bean;
 
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
+import br.com.sescacre.sisrelat.dao.HorariosDAO;
 import br.com.sescacre.sisrelat.dao.InscricaoDao;
 import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
+import br.com.sescacre.sisrelat.dao.UsuariosDao;
 import br.com.sescacre.sisrelat.entidades.Chamada;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
+import br.com.sescacre.sisrelat.entidades.Horarios;
 import br.com.sescacre.sisrelat.entidades.Inscritos;
 import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
+import br.com.sescacre.sisrelat.entidades.Usuarios;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
 import br.com.sescacre.sisrelat.util.DateConverter;
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -202,26 +211,58 @@ public class SelecaoBean implements Serializable {
         FacesContext msg = FacesContext.getCurrentInstance();
         List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(idAtividade, idConf, idTurma);
         ProgramaCorrente progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
+        Map<DayOfWeek, Horarios> horarios = new HorariosDAO().pegaHorarioDaAtividade(idAtividade, idConf, idTurma);
         Calendar c = Calendar.getInstance();
         c.setTime(dataChamada);
         int mes = c.get(Calendar.MONTH) + 1;
         int ano = c.get(Calendar.YEAR);
-        LocalTime horaInicio = DateConverter.convertDateToLocalTime(progocor.getHoraInicio());
-        LocalTime horaFim = DateConverter.convertDateToLocalTime(progocor.getHoraFim());
-        Duration duration = Duration.between(horaInicio, horaFim);
+        YearMonth anoMes = YearMonth.of(ano, mes);
+        Usuarios user = new UsuariosDao().pesquisaPorId(new UsuarioBean().getUsuario().getLogin());
         System.out.println("Turma: " + progocor.getDescricao());
-        System.out.println("Horário: " + progocor.getHoraInicio() + " às " + progocor.getHoraFim());
-        System.out.println("Duração: " + duration.toHours() + " - Minutos: " + duration.toMinutes());
         System.out.println();
-        System.out.println("Inicio da chamada: "+ new Date());
-        if (duration.toHours() <= 1) {
-            RealizarChamada.turmasHorarioFixo(ano, mes, progocor, inscritos, msg);
-        } else {
-            /*msg.addMessage(null,
-             new FacesMessage(FacesMessage.SEVERITY_INFO,
-             "Turmas de horário livre!", null));*/
-            RealizarChamada.turmaHorarioLivre(ano, mes, progocor, inscritos, msg);
+        System.out.println("Total de Inscritos: "+inscritos.size());
+        System.out.println();
+        System.out.println("Início da chamada: " + new Date());
+        System.out.println();
+        for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
+            Horarios h = new Horarios();
+            LocalDate data = anoMes.atDay(dia);
+            if (!data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                System.out.println("Dia: "+data);
+                if (data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+                    h = horarios.get(DayOfWeek.MONDAY);
+                }
+                if (data.getDayOfWeek().equals(DayOfWeek.TUESDAY)) {
+                    h = horarios.get(DayOfWeek.TUESDAY);
+                }
+                if (data.getDayOfWeek().equals(DayOfWeek.WEDNESDAY)) {
+                    h = horarios.get(DayOfWeek.WEDNESDAY);
+                }
+                if (data.getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
+                    h = horarios.get(DayOfWeek.THURSDAY);
+                }
+                if (data.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
+                    h = horarios.get(DayOfWeek.FRIDAY);
+                }
+                if (data.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                    h = horarios.get(DayOfWeek.SATURDAY);
+                }
+                LocalTime horaInicio = h.getHoraInicio().toLocalTime();
+                LocalTime horaFim = h.getHoraTermino().toLocalTime();
+                Duration duration = Duration.between(horaInicio, horaFim);
+                //System.out.println("Horário da " + data.getDayOfWeek() + ": " + horaInicio + " às " + horaFim);
+                //System.out.println("Duração: " + duration.toHours() + " - Minutos: " + duration.toMinutes());
+                if (duration.toHours() <= 1) {
+                    RealizarChamada.turmasHorarioFixo(progocor, h, data, inscritos, user);
+                } else {
+                    RealizarChamada.turmaHorarioLivre(progocor, h, data, inscritos, user);
+                }
+            }
         }
+        System.out.println("Termino da chamada: " + new Date());
+        msg.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "A chamada da turma '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
         limparCampos();
         return null;
     }

@@ -65,8 +65,6 @@ public class ProgramaCorrenteDao {
                 programaCorrente.setSequenciaOcorrencia(rs.getLong("SQOCORRENC"));
                 programaCorrente.setConfiguracaoPrograma(rs.getLong("CDCONFIG"));
                 programaCorrente.setDescricao(rs.getString("DSUSUARIO"));
-                programaCorrente.setHoraInicio(rs.getTime("HRINICIO"));
-                programaCorrente.setHoraFim(rs.getTime("HRFIM"));
             }
             return programaCorrente;
         } catch (Exception e) {

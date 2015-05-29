@@ -66,6 +66,7 @@ public class UsuariosDao {
 
     public Usuarios pesquisaPorId(String id) {
         Session s = HibernateUtil.getSession();
-        return (Usuarios) s.load(Usuarios.class, id);
+        Usuarios u = (Usuarios) s.load(Usuarios.class, id);
+        return u;
     }
 }

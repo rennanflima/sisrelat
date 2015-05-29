@@ -8,88 +8,88 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <!-- Modal de Aguarde... -->
-        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
 
-        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
-                  draggable="false" closable="false" resizable="false">  
-            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
-        </p:dialog>
-        
-        <p:fieldset legend="Realizar Chamada" style="max-width: 800px;">
-            <h:form id="filtroChamada">
-                
-                <p:growl id="aviso" life="5000" />
-                
-                <h:panelGrid id="falta" columns="2" cellpadding="4" cellspacing="10">
-                    <p:outputLabel for="uop" value="Unidade Operacional: "/>
-                    <p:selectOneMenu id="uop" required="true" value="#{selecaoBean.idUop}"
-                                     immediate="true" label="Unidade Operacional" requiredMessage="O campo 'Unidade Operacional' é obrigatório">
-                        <f:selectItem itemLabel="Selecione uma Unidade Operacional..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaUops}" var="u"
-                                       itemLabel="#{u.nome}" itemValue="#{u.codigo}" />
-                        <p:ajax update="programa"/>
-                    </p:selectOneMenu>
+        <p:fieldset legend="Realizar Chamada">
+            <div style="max-width: 650px;">
+                <h:form id="filtroChamada">
 
-                    <p:outputLabel for="programa" value="Programa: "/>
-                    <p:selectOneMenu id="programa" required="true" value="#{selecaoBean.idPrograma}"
-                                     immediate="true" label="Programa" requiredMessage="O campo 'Programa' é obrigatório">
-                        <f:selectItem itemLabel="Selecione um Programa..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaProgramas}" var="p"
-                                       itemLabel="#{p.nome}" itemValue="#{p.codigo}" />
-                        <p:ajax update="modalidade"/>
-                    </p:selectOneMenu>
+                    <p:growl id="aviso" life="5000" />
 
-                    <p:outputLabel for="modalidade" value="Modalidade: "/>
-                    <p:selectOneMenu id="modalidade" required="true" value="#{selecaoBean.idModalidade}"
-                                     immediate="true" label="Modalidade" requiredMessage="O campo 'Modalidade' é obrigatório">
-                        <f:selectItem itemLabel="Selecione uma Modalidade..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaModalidades}" var="m"
-                                       itemLabel="#{m.nome}" itemValue="#{m.codigo}" />
-                        <p:ajax update="atividade"/>
-                    </p:selectOneMenu>
+                    <h:panelGrid id="falta" columns="2" cellpadding="4" cellspacing="10">
+                        <p:outputLabel for="uop" value="Unidade Operacional: "/>
+                        <p:selectOneMenu id="uop" required="true" value="#{selecaoBean.idUop}"
+                                         immediate="true" label="Unidade Operacional" requiredMessage="O campo 'Unidade Operacional' é obrigatório">
+                            <f:selectItem itemLabel="Selecione uma Unidade Operacional..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaUops}" var="u"
+                                           itemLabel="#{u.nome}" itemValue="#{u.codigo}" />
+                            <p:ajax update="programa"/>
+                        </p:selectOneMenu>
 
-                    <p:outputLabel for="atividade" value="Atividade: "/>
-                    <p:selectOneMenu id="atividade" required="true" value="#{selecaoBean.idAtividade}"
-                                     immediate="true" label="Atividade" requiredMessage="O campo 'Atividade' é obrigatório">
-                        <f:selectItem itemLabel="Selecione uma Atividade..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaAtividades}" var="a"
-                                       itemLabel="#{a.nome}" itemValue="#{a.codigo}" />
-                        <p:ajax update="conf"/>
-                    </p:selectOneMenu>
+                        <p:outputLabel for="programa" value="Programa: "/>
+                        <p:selectOneMenu id="programa" required="true" value="#{selecaoBean.idPrograma}"
+                                         immediate="true" label="Programa" requiredMessage="O campo 'Programa' é obrigatório">
+                            <f:selectItem itemLabel="Selecione um Programa..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaProgramas}" var="p"
+                                           itemLabel="#{p.nome}" itemValue="#{p.codigo}" />
+                            <p:ajax update="modalidade"/>
+                        </p:selectOneMenu>
 
-                    <p:outputLabel for="conf" value="Ano de Configuração: "/>
-                    <p:selectOneMenu id="conf" required="true" value="#{selecaoBean.idConf}"
-                                     immediate="true" label="Ano de Configuração" requiredMessage="O campo 'Ano de Configuração' é obrigatório">
-                        <f:selectItem itemLabel="Selecione uma Configuração..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaConfiguracoes}" var="conf"
-                                       itemLabel="#{conf.nome}" itemValue="#{conf.codigo}" />
-                        <p:ajax update="turma"/>
-                    </p:selectOneMenu>
+                        <p:outputLabel for="modalidade" value="Modalidade: "/>
+                        <p:selectOneMenu id="modalidade" required="true" value="#{selecaoBean.idModalidade}"
+                                         immediate="true" label="Modalidade" requiredMessage="O campo 'Modalidade' é obrigatório">
+                            <f:selectItem itemLabel="Selecione uma Modalidade..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaModalidades}" var="m"
+                                           itemLabel="#{m.nome}" itemValue="#{m.codigo}" />
+                            <p:ajax update="atividade"/>
+                        </p:selectOneMenu>
 
-                    <p:outputLabel for="turma" value="Turma: "/>
-                    <p:selectOneMenu id="turma" required="true" value="#{selecaoBean.idTurma}"
-                                     immediate="true" label="Turma" requiredMessage="O campo 'Turma' é obrigatório">
-                        <f:selectItem itemLabel="Selecione uma Turma..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaTurmas}" var="t"
-                                       itemLabel="#{t.descricao}" itemValue="#{t.sequenciaOcorrencia}" />
-                    </p:selectOneMenu>
+                        <p:outputLabel for="atividade" value="Atividade: "/>
+                        <p:selectOneMenu id="atividade" required="true" value="#{selecaoBean.idAtividade}"
+                                         immediate="true" label="Atividade" requiredMessage="O campo 'Atividade' é obrigatório">
+                            <f:selectItem itemLabel="Selecione uma Atividade..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaAtividades}" var="a"
+                                           itemLabel="#{a.nome}" itemValue="#{a.codigo}" />
+                            <p:ajax update="conf"/>
+                        </p:selectOneMenu>
 
-                    <p:outputLabel for="mes" value="Mês:"/>
-                    <p:calendar id="mes" locale="pt" label="Mês" value="#{selecaoBean.dataChamada}" required="true" navigator="true"
-                                pattern="MM/yyyy" immediate="true"/>
-                </h:panelGrid>
-                <div style="float: right;">
-                    <p:commandButton value="Realizar Chamada" update="filtroChamada, :filtroChamada:aviso" action="#{selecaoBean.realizaChamada()}" immediate="false" />
-                    <p:spacer width="5" height="0"/>
-                </div>
-            </h:form>
+                        <p:outputLabel for="conf" value="Ano de Configuração: "/>
+                        <p:selectOneMenu id="conf" required="true" value="#{selecaoBean.idConf}"
+                                         immediate="true" label="Ano de Configuração" requiredMessage="O campo 'Ano de Configuração' é obrigatório">
+                            <f:selectItem itemLabel="Selecione o ano..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaConfiguracoes}" var="conf"
+                                           itemLabel="#{conf.nome}" itemValue="#{conf.codigo}" />
+                            <p:ajax update="turma"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="turma" value="Turma: "/>
+                        <p:selectOneMenu id="turma" required="true" value="#{selecaoBean.idTurma}"
+                                         immediate="true" label="Turma" requiredMessage="O campo 'Turma' é obrigatório">
+                            <f:selectItem itemLabel="Selecione uma Turma..." itemValue="" /> 
+                            <f:selectItems value="#{selecaoBean.listaTurmas}" var="t"
+                                           itemLabel="#{t.descricao}" itemValue="#{t.sequenciaOcorrencia}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="mes" value="Mês:"/>
+                        <p:calendar id="mes" locale="pt" label="Mês" value="#{selecaoBean.dataChamada}" required="true" navigator="true"
+                                    pattern="MM/yyyy" immediate="true" showOn="button" />
+                    </h:panelGrid>
+                    <div style="float: right;">
+                        <p:commandButton widgetVar="realizarChamada" value="Realizar Chamada" update="filtroChamada, :filtroChamada:aviso, progressBarChamada" action="#{selecaoBean.realizaChamada()}" immediate="false" 
+                                         onclick="pbChamada.start(); realizarChamada.disable();"/>
+                        <p:spacer width="5" height="0"/>
+                    </div>
+                </h:form>
+            </div>
             <br />
             <div style="float: left; font-size: 11px; font-weight:bold;">
                 * Campo obrigatório
             </div>
             <br/>
         </p:fieldset>
+        <br/>
+        <p:panel>
+            <p:progressBar id="progressBarChamada" widgetVar="pbChamada" ajax="true" value="#{selecaoBean.progress}" labelTemplate="{value}%" styleClass="animated"/>
+        </p:panel>
     </ui:define>
 
 </ui:composition>

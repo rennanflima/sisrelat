@@ -76,3 +76,7 @@
 .corpoLogin{
    min-height: 65%;
 }
+
+.animated .ui-progressbar-value{
+    background-image: url("../imgs/pbar-ani.gif.xhtml");
+}

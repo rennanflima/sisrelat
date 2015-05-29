@@ -22,6 +22,7 @@ import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.entidades.Usuarios;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
 import br.com.sescacre.sisrelat.util.DateConverter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -33,6 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -60,6 +63,7 @@ public class SelecaoBean implements Serializable {
     private List<ConfiguracaoPrograma> listaConfiguracoes = new ArrayList<ConfiguracaoPrograma>();
     private List<ProgramaCorrente> listaTurmas = new ArrayList<ProgramaCorrente>();
     private Date dataChamada;
+    private Integer progress;
 
     @PostConstruct
     public void init() {
@@ -190,6 +194,20 @@ public class SelecaoBean implements Serializable {
         it.gerarRelatorioWeb(idAtividade, idConf, idTurma);
     }
 
+    public Integer getProgress() {
+        if(progress == null){
+            progress = 0;
+        }else{
+            if(progress > 100)
+                progress = 100;
+        } 
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
     public String limparCampos() {
         idUop = null;
         idPrograma = null;
@@ -198,12 +216,13 @@ public class SelecaoBean implements Serializable {
         idConf = null;
         dataChamada = null;
         idTurma = null;
-        listaProgramas = new ArrayList<Programa>();
-        listaAtividades = new ArrayList<Programa>();
-        listaConfiguracoes = new ArrayList<ConfiguracaoPrograma>();
-        listaModalidades = new ArrayList<Programa>();
-        listaTurmas = new ArrayList<ProgramaCorrente>();
+        listaProgramas = new ArrayList<>();
+        listaAtividades = new ArrayList<>();
+        listaConfiguracoes = new ArrayList<>();
+        listaModalidades = new ArrayList<>();
+        listaTurmas = new ArrayList<>();
         init();
+        progress = null;
         return null;
     }
 
@@ -224,11 +243,11 @@ public class SelecaoBean implements Serializable {
         System.out.println();
         System.out.println("Início da chamada: " + new Date());
         System.out.println();
-        for (int dia = 1; dia < anoMes.lengthOfMonth(); dia++) {
+        for (int dia = 1; dia <= anoMes.lengthOfMonth(); dia++) {
             Horarios h = new Horarios();
             LocalDate data = anoMes.atDay(dia);
+            setProgress((dia*100)/anoMes.lengthOfMonth());
             if (!data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                System.out.println("Dia: "+data);
                 if (data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
                     h = horarios.get(DayOfWeek.MONDAY);
                 }

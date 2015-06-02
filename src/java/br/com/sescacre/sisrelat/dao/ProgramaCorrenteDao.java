@@ -51,11 +51,13 @@ public class ProgramaCorrenteDao {
         ProgramaCorrente programaCorrente = new ProgramaCorrente();
         try {
             Connection conn = con.abreConexao();
-            PreparedStatement ps = conn.prepareStatement(
+            /*PreparedStatement ps = conn.prepareStatement(
                     "SELECT PO.CDPROGRAMA, PO.CDCONFIG, PO.SQOCORRENC, PO.DSUSUARIO "
                     + "FROM PROGOCORR PO INNER JOIN HORARIOS H ON H.CDELEMENT = SUBSTR(CAST(100000000 + PO.CDPROGRAMA AS CHAR(9)), 2, 8) || "
                     + "SUBSTR(CAST(100000000 + PO.CDCONFIG AS CHAR(9)), 2, 8) || SUBSTR(CAST(100000000 + PO.SQOCORRENC AS CHAR(9)), 2, 8) "
-                    + "WHERE PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ?");
+                    + "WHERE PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ?");*/
+            PreparedStatement ps = conn.prepareStatement("SELECT CDPROGRAMA, CDCONFIG, SQOCORRENC, DSUSUARIO FROM PROGOCORR "
+                    + "WHERE CDPROGRAMA = ? AND CDCONFIG = ? AND SQOCORRENC = ?");
             ps.setLong(1, atividade);
             ps.setLong(2, configuracao);
             ps.setLong(3, sequenciaOcorrcencia);

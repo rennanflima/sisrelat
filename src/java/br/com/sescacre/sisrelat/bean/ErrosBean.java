@@ -23,7 +23,7 @@ public class ErrosBean implements Serializable{
     public String redirecionaErros() {
         FacesContext msg = FacesContext.getCurrentInstance();
         try {
-            msg.getExternalContext().redirect("/controleAcesso/publico/temp.xhtml");
+            msg.getExternalContext().redirect("/sisrelat/publico/temp.xhtml");
         } catch (Exception e) {
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,

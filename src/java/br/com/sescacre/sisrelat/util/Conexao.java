@@ -15,7 +15,8 @@ import java.sql.SQLException;
 public class Conexao {
 
     private String driver = "com.ibm.db2.jcc.DB2Driver";
-    private String url = "jdbc:db2://192.168.0.220:50000/BDPROD";
+    //private String url = "jdbc:db2://192.168.0.220:50000/BDPROD";
+    private String url = "jdbc:db2://192.168.0.242:50000/BDTESTE";
     private String user = "db2dba";
     private String senha = "$3$c4cr3db2";
     

@@ -43,13 +43,6 @@
     </h:head>
 
     <h:body>
-        <!-- Modal de Aguarde... -->
-        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
-
-        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
-                  draggable="false" closable="false" resizable="false">  
-            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
-        </p:dialog>
 
         <div style="text-align: right;">
             <h:outputText value="#{usuarioBean.usuario.login} " />
@@ -64,12 +57,15 @@
                 <p:menubar>
                     <sec:ifAnyGranted roles="ROLE_GER">
                         <p:menuitem value="Início" url="/admin/index.xhtml" />
+                        <p:submenu label="Cadastros">
+                            <p:menuitem value="Funcionários" url="/admin/funcionarios.xhtml" icon="ui-icon-contact"/>
+                            <p:menuitem value="Setores" url="/admin/setores.xhtml" icon="ui-icon-contact"/>
+                            <p:menuitem value="Cargos" url="/admin/cargos.xhtml" icon="ui-icon-contact"/>
+                        </p:submenu>
                     </sec:ifAnyGranted>
-                    <p:submenu label="Cadastros">
-                        <p:menuitem value="Funcionários" url="/admin/funcionarios.xhtml" icon="ui-icon-contact"/>
-                        <p:menuitem value="Setores" url="/admin/setores.xhtml" icon="ui-icon-contact"/>
-                        <p:menuitem value="Cargos" url="/admin/cargos.xhtml" icon="ui-icon-contact"/>
-                    </p:submenu>
+                    <sec:ifAnyGranted roles="ROLE_TEC">
+                        <p:menuitem value="Início" url="/tecnico/index.xhtml" />
+                    </sec:ifAnyGranted>
                     <p:submenu label="Serviços">
                         <p:menuitem value="Realizar Chamada" url="/servicos/chamada.xhtml" />
                         <p:menuitem value="Buscar Cliente" url="/servicos/buscarCliente.xhtml" />
@@ -128,7 +124,7 @@
                     * Campos obrigatórios
                 </div>
                 <div style="float: right">
-                    <p:commandButton update="trocaSenha, :growlMsg:aviso" value="Salvar" action="#{trocaSenhaBean.alteraSenha}"/>
+                    <p:commandButton update="trocaSenha, :growlMsg:aviso" value="Salvar" action="#{trocaSenhaBean.alteraSenha}" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
                     <p:commandButton update="trocaSenha" value="Limpar" action="#{trocaSenhaBean.limpar()}" immediate="true" process="@this"/>
                 </div>
             </h:form>

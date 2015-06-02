@@ -156,7 +156,7 @@ public class PactoAcessoDao {
                         + "PA.DATAHORA "
                     + "FROM CLIENTELA C INNER JOIN PACTOACESSO PA ON C.CDUOP = PA.CDUOP AND C.SQMATRIC = PA.SQMATRIC "
                         + "AND PA.DATAHORA BETWEEN ? AND ?  AND PA.SQMATRIC = ?"
-                    + "INNER JOIN CLIFORMAT CF ON CF.CDUOP = PA.CDUOP AND CF.SQMATRIC = PA.SQMATRIC ");
+                    + "INNER JOIN CLIFORMAT CF ON CF.CDUOP = PA.CDUOP AND CF.SQMATRIC = PA.SQMATRIC ORDER BY PA.DATAHORA");
             ps.setDate(1, dtInicio);
             ps.setDate(2, dtTermino);
             ps.setString(3, sqmatric);

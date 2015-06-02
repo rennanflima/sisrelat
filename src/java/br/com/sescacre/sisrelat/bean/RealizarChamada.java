@@ -6,6 +6,7 @@
 package br.com.sescacre.sisrelat.bean;
 
 import br.com.sescacre.sisrelat.dao.ChamadaDao;
+import br.com.sescacre.sisrelat.dao.InscricaoDao;
 import br.com.sescacre.sisrelat.dao.PactoAcessoDao;
 import br.com.sescacre.sisrelat.entidades.Acesso;
 import br.com.sescacre.sisrelat.entidades.Chamada;
@@ -30,8 +31,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class RealizarChamada implements Serializable {
 
-    public static void turmasHorarioFixo(ProgramaCorrente progocor, Horarios h, LocalDate data, List<Inscritos> inscritos, Usuarios user) {
+    public static void turmasHorarioFixo(ProgramaCorrente progocor, Horarios h, LocalDate data, Usuarios user) {
         List<Chamada> chamada = new ArrayList<>();
+        List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia());
         Date hi = DateConverter.convertLocalDateTimeToDate(h.getHoraInicio());
         Date hf = DateConverter.convertLocalDateTimeToDate(h.getHoraTermino());
         List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, h.getHoraInicio().toLocalTime(), h.getHoraTermino().toLocalTime());
@@ -69,7 +71,7 @@ public class RealizarChamada implements Serializable {
         }
     }
 
-    public static void turmaHorarioLivre(ProgramaCorrente progocor, Horarios h, LocalDate data, List<Inscritos> inscritos, Usuarios user) {
+    public static void turmaHorarioLivre(ProgramaCorrente progocor, Horarios h, LocalDate data, Usuarios user) {
         CopyOnWriteArrayList<Chamada> chamada = new CopyOnWriteArrayList<>();
         /*System.out.println();
          System.out.println("--------------------------------------------");
@@ -78,7 +80,7 @@ public class RealizarChamada implements Serializable {
          System.out.println();
          System.out.println("--------------------------------------------");
          System.out.println();*/
-
+        List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia());
         Date hi = DateConverter.convertLocalDateTimeToDate(h.getHoraInicio());
         Date hf = DateConverter.convertLocalDateTimeToDate(h.getHoraTermino());
         for (Inscritos insc : inscritos) { // percorre a lista de inscritos da turma

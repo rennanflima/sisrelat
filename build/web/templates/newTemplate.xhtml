@@ -43,6 +43,14 @@
     </h:head>
 
     <h:body>
+        <!-- Modal de Aguarde... -->
+        <p:ajaxStatus onstart="statusDialog.show();" onsuccess="statusDialog.hide();"/>  
+
+        <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
+                  draggable="false" closable="false" resizable="false">  
+            <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
+        </p:dialog>
+
         <div style="text-align: right;">
             <h:outputText value="#{usuarioBean.usuario.login} " />
             <p:graphicImage alt="Segurança" style="border: none" value="/resources/imgs/icon_cristal_key.png"/>
@@ -89,12 +97,12 @@
                 <br/>
                 Serviço Social do Comércio - Sesc-DR/AC</p>
         </div>
-        
+
         <p:dialog modal="true" widgetVar="statusDialog" header="Aguarde..."   
                   draggable="false" closable="false" resizable="false">  
             <p:graphicImage value="/resources/imgs/ajaxloadingbar.gif" />
         </p:dialog>
-        
+
         <h:form id="growlMsg">
             <p:growl id="aviso" life="5000"/>
         </h:form>

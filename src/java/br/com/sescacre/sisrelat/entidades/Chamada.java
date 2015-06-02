@@ -8,7 +8,6 @@ package br.com.sescacre.sisrelat.entidades;
 import br.com.sescacre.sisrelat.util.DateConverter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;

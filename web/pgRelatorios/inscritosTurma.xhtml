@@ -17,61 +17,61 @@
             <h:form id="filtroInscritos">
                 <h:panelGrid id="filtro" columns="2" cellpadding="4" cellspacing="10">
                     <p:outputLabel for="uop" value="Unidade Operacional: "/>
-                    <p:selectOneMenu id="uop" required="true" value="#{selecaoBean.idUop}"
+                    <p:selectOneMenu id="uop" required="true" value="#{inscritosTurma.idUop}"
                                      immediate="true" label="Unidade Operacional" requiredMessage="O campo 'Unidade Operacional' é obrigatório">
                         <f:selectItem itemLabel="Selecione uma Unidade Operacional..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaUops}" var="u"
+                        <f:selectItems value="#{inscritosTurma.listaUops}" var="u"
                                        itemLabel="#{u.nome}" itemValue="#{u.codigo}" />
                         <p:ajax update="programa"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="programa" value="Programa: "/>
-                    <p:selectOneMenu id="programa" value="#{selecaoBean.idPrograma}"
+                    <p:selectOneMenu id="programa" value="#{inscritosTurma.idPrograma}"
                                      immediate="true" label="Programa">
                         <f:selectItem itemLabel="Selecione um Programa..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaProgramas}" var="p"
+                        <f:selectItems value="#{inscritosTurma.listaProgramas}" var="p"
                                        itemLabel="#{p.nome}" itemValue="#{p.codigo}" />
                         <p:ajax update="modalidade"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="modalidade" value="Modalidade: "/>
-                    <p:selectOneMenu id="modalidade" value="#{selecaoBean.idModalidade}"
+                    <p:selectOneMenu id="modalidade" value="#{inscritosTurma.idModalidade}"
                                      immediate="true" label="Modalidade">
                         <f:selectItem itemLabel="Selecione uma Modalidade..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaModalidades}" var="m"
+                        <f:selectItems value="#{inscritosTurma.listaModalidades}" var="m"
                                        itemLabel="#{m.nome}" itemValue="#{m.codigo}" />
                         <p:ajax update="atividade"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="atividade" value="Atividade: "/>
-                    <p:selectOneMenu id="atividade" value="#{selecaoBean.idAtividade}"
+                    <p:selectOneMenu id="atividade" value="#{inscritosTurma.idAtividade}"
                                      immediate="true" label="Atividade">
                         <f:selectItem itemLabel="Selecione uma Atividade..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaAtividades}" var="a"
+                        <f:selectItems value="#{inscritosTurma.listaAtividades}" var="a"
                                        itemLabel="#{a.nome}" itemValue="#{a.codigo}" />
                         <p:ajax update="conf"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="conf" value="Ano de Configuração: "/>
-                    <p:selectOneMenu id="conf" required="true" value="#{selecaoBean.idConf}"
+                    <p:selectOneMenu id="conf" required="true" value="#{inscritosTurma.idConf}"
                                      immediate="true" label="Ano de Configuração">
                         <f:selectItem itemLabel="Selecione um Ano de Configuração..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaConfiguracoes}" var="conf"
+                        <f:selectItems value="#{inscritosTurma.listaConfiguracoes}" var="conf"
                                        itemLabel="#{conf.nome}" itemValue="#{conf.codigo}" />
                         <p:ajax update="turma"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="turma" value="Turma: "/>
-                    <p:selectOneMenu id="turma" required="true" value="#{selecaoBean.idTurma}"
+                    <p:selectOneMenu id="turma" required="true" value="#{inscritosTurma.idTurma}"
                                      immediate="true" label="Turma" requiredMessage="O campo 'Turma' é obrigatório">
                         <f:selectItem itemLabel="Selecione uma Turma..." itemValue="" /> 
-                        <f:selectItems value="#{selecaoBean.listaTurmas}" var="t"
+                        <f:selectItems value="#{inscritosTurma.listaTurmas}" var="t"
                                        itemLabel="#{t.descricao}" itemValue="#{t.sequenciaOcorrencia}" />
                     </p:selectOneMenu>
                 </h:panelGrid>
                 <br/>
                 <div style="float: right;">
-                    <p:commandButton value="Filtrar" ajax="false" action="#{selecaoBean.geraRelatório()}" immediate="false" onclick="this.form.target = '_blank'" />
+                    <p:commandButton value="Filtrar" ajax="false" action="#{inscritosTurma.gerarRelatorioWeb()}" immediate="false" onclick="this.form.target = '_blank'" />
                     <p:spacer width="5" height="0"/>
                     <p:commandButton value="Limpar" update="filtroInscritos" action="#{selecaoBean.limparCampos()}" immediate="true" process="@this"/>
                 </div>

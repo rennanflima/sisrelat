@@ -52,7 +52,7 @@ public class ProgramaCorrenteDao {
         try {
             Connection conn = con.abreConexao();
             PreparedStatement ps = conn.prepareStatement(
-                    "SELECT PO.CDPROGRAMA, PO.CDCONFIG, PO.SQOCORRENC, PO.DSUSUARIO, H.HRINICIO, H.HRFIM "
+                    "SELECT PO.CDPROGRAMA, PO.CDCONFIG, PO.SQOCORRENC, PO.DSUSUARIO "
                     + "FROM PROGOCORR PO INNER JOIN HORARIOS H ON H.CDELEMENT = SUBSTR(CAST(100000000 + PO.CDPROGRAMA AS CHAR(9)), 2, 8) || "
                     + "SUBSTR(CAST(100000000 + PO.CDCONFIG AS CHAR(9)), 2, 8) || SUBSTR(CAST(100000000 + PO.SQOCORRENC AS CHAR(9)), 2, 8) "
                     + "WHERE PO.CDPROGRAMA = ? AND PO.CDCONFIG = ? AND PO.SQOCORRENC = ?");

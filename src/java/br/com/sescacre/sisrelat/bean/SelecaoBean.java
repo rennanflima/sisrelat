@@ -5,14 +5,13 @@
  */
 package br.com.sescacre.sisrelat.bean;
 
+import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
 import br.com.sescacre.sisrelat.dao.HorariosDAO;
 import br.com.sescacre.sisrelat.dao.InscricaoDao;
 import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
-import br.com.sescacre.sisrelat.dao.UsuariosDao;
-import br.com.sescacre.sisrelat.entidades.Chamada;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
 import br.com.sescacre.sisrelat.entidades.Horarios;
 import br.com.sescacre.sisrelat.entidades.Inscritos;
@@ -21,25 +20,22 @@ import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.entidades.Usuarios;
 import br.com.sescacre.sisrelat.relatorios.InscritosTurma;
-import br.com.sescacre.sisrelat.util.DateConverter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 /**
@@ -47,7 +43,7 @@ import javax.faces.context.FacesContext;
  * @author Rennan Francisco
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class SelecaoBean implements Serializable {
 
     private Long idUop;
@@ -56,14 +52,19 @@ public class SelecaoBean implements Serializable {
     private Long idAtividade;
     private Long idConf;
     private Long idTurma;
-    private List<UnidadeOperacional> listaUops = new ArrayList<UnidadeOperacional>();
-    private List<Programa> listaProgramas = new ArrayList<Programa>();
-    private List<Programa> listaModalidades = new ArrayList<Programa>();
-    private List<Programa> listaAtividades = new ArrayList<Programa>();
-    private List<ConfiguracaoPrograma> listaConfiguracoes = new ArrayList<ConfiguracaoPrograma>();
-    private List<ProgramaCorrente> listaTurmas = new ArrayList<ProgramaCorrente>();
+    private List<UnidadeOperacional> listaUops = new ArrayList<>();
+    private List<Programa> listaProgramas = new ArrayList<>();
+    private List<Programa> listaModalidades = new ArrayList<>();
+    private List<Programa> listaAtividades = new ArrayList<>();
+    private List<ConfiguracaoPrograma> listaConfiguracoes = new ArrayList<>();
+    private List<ProgramaCorrente> listaTurmas = new ArrayList<>();
+    private ProgramaCorrente progocor;
     private Date dataChamada;
     private Integer progress;
+    private YearMonth anoMes;
+    private Long atendimentos;
+    private Long faltas;
+    private Integer totalInscritos;
 
     @PostConstruct
     public void init() {
@@ -189,23 +190,59 @@ public class SelecaoBean implements Serializable {
         this.dataChamada = dataChamada;
     }
 
-    public void geraRelatório() {
-        InscritosTurma it = new InscritosTurma();
-        it.gerarRelatorioWeb(idAtividade, idConf, idTurma);
-    }
-
     public Integer getProgress() {
-        if(progress == null){
+        if (progress == null) {
             progress = 0;
-        }else{
-            if(progress > 100)
+        } else {
+            if (progress > 100) {
                 progress = 100;
-        } 
+            }
+        }
         return progress;
     }
 
     public void setProgress(Integer progress) {
         this.progress = progress;
+    }
+
+    public ProgramaCorrente getProgocor() {
+        return progocor;
+    }
+
+    public void setProgocor(ProgramaCorrente progocor) {
+        this.progocor = progocor;
+    }
+
+    public YearMonth getAnoMes() {
+        return anoMes;
+    }
+
+    public void setAnoMes(YearMonth anoMes) {
+        this.anoMes = anoMes;
+    }
+
+    public Long getAtendimentos() {
+        return atendimentos;
+    }
+
+    public void setAtendimentos(Long atendimentos) {
+        this.atendimentos = atendimentos;
+    }
+
+    public Long getFaltas() {
+        return faltas;
+    }
+
+    public void setFaltas(Long faltas) {
+        this.faltas = faltas;
+    }
+
+    public Integer getTotalInscritos() {
+        return totalInscritos;
+    }
+
+    public void setTotalInscritos(Integer totalInscritos) {
+        this.totalInscritos = totalInscritos;
     }
 
     public String limparCampos() {
@@ -229,24 +266,27 @@ public class SelecaoBean implements Serializable {
     public String realizaChamada() {
         FacesContext msg = FacesContext.getCurrentInstance();
         List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(idAtividade, idConf, idTurma);
-        ProgramaCorrente progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
+        progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
         Map<DayOfWeek, Horarios> horarios = new HorariosDAO().pegaHorarioDaAtividade(idAtividade, idConf, idTurma);
         Calendar c = Calendar.getInstance();
         c.setTime(dataChamada);
         int mes = c.get(Calendar.MONTH) + 1;
         int ano = c.get(Calendar.YEAR);
-        YearMonth anoMes = YearMonth.of(ano, mes);
-        Usuarios user = new UsuariosDao().pesquisaPorId(new UsuarioBean().getUsuario().getLogin());
+        anoMes = YearMonth.of(ano, mes);
+        totalInscritos = inscritos.size();
+        Usuarios user = new UsuarioBean().getUsuario();
         System.out.println("Turma: " + progocor.getDescricao());
-        System.out.println();
-        System.out.println("Total de Inscritos: "+inscritos.size());
         System.out.println();
         System.out.println("Início da chamada: " + new Date());
         System.out.println();
         for (int dia = 1; dia <= anoMes.lengthOfMonth(); dia++) {
             Horarios h = new Horarios();
             LocalDate data = anoMes.atDay(dia);
-            setProgress((dia*100)/anoMes.lengthOfMonth());
+            if (dia == anoMes.lengthOfMonth()) {
+                setProgress(99);
+            } else {
+                setProgress((dia * 100) / anoMes.lengthOfMonth());
+            }
             if (!data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                 if (data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
                     h = horarios.get(DayOfWeek.MONDAY);
@@ -278,11 +318,18 @@ public class SelecaoBean implements Serializable {
                 }
             }
         }
-        System.out.println("Termino da chamada: " + new Date());
-        msg.addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "A chamada da turma '" + progocor.getDescricao() + "' do mês " + mes + "/" + ano + " foi realizada com sucesso.", null));
+        setProgress(100);
         limparCampos();
+        System.out.println("Termino da chamada: " + new Date());
+        return "chamadaCompleta";
+    }
+
+    public String chamadaCompleta() {
+        atendimentos = new ChamadaDao().contaPresencaDia(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia(), true);
+        faltas = new ChamadaDao().contaPresencaDia(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia(), false);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                "A chamada da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + " foi realizada com sucesso.", null));
         return null;
     }
 

@@ -45,7 +45,7 @@ public class UsuariosDao {
         Session s = HibernateUtil.getSession();
         try {
             Transaction t = s.beginTransaction();
-            s.update(user);
+            s.merge(user);
             t.commit();
         } catch (Exception ex) {
             System.out.println("Erro DAO: "+ex);

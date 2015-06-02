@@ -8,8 +8,11 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
+        <f:metadata>  
+            <f:event type="preRenderView" listener="#{selecaoBean.limparCampos()}"/>  
+        </f:metadata>
 
-        <p:fieldset legend="Realizar Chamada">
+        <p:fieldset id="fieldsetChamada" legend="Realizar Chamada">
             <div style="max-width: 650px;">
                 <h:form id="filtroChamada">
 
@@ -71,11 +74,13 @@
 
                         <p:outputLabel for="mes" value="Mês:"/>
                         <p:calendar id="mes" locale="pt" label="Mês" value="#{selecaoBean.dataChamada}" required="true" navigator="true"
-                                    pattern="MM/yyyy" immediate="true" showOn="button" />
+                                    pattern="MM/yyyy" immediate="true"/>
                     </h:panelGrid>
                     <div style="float: right;">
-                        <p:commandButton widgetVar="realizarChamada" value="Realizar Chamada" update="filtroChamada, :filtroChamada:aviso, progressBarChamada" action="#{selecaoBean.realizaChamada()}" immediate="false" 
-                                         onclick="pbChamada.start(); realizarChamada.disable();"/>
+                        <p:commandButton id="btnRealizarChamada" widgetVar="realizarChamada" value="Realizar Chamada" update="filtroChamada, :progressBarChamada" action="#{selecaoBean.realizaChamada()}" immediate="false" 
+                                         onclick="pbChamada.start();">
+                            <p:ajax global="false"/>
+                        </p:commandButton>
                         <p:spacer width="5" height="0"/>
                     </div>
                 </h:form>
@@ -88,8 +93,17 @@
         </p:fieldset>
         <br/>
         <p:panel>
-            <p:progressBar id="progressBarChamada" widgetVar="pbChamada" ajax="true" value="#{selecaoBean.progress}" labelTemplate="{value}%" styleClass="animated"/>
+            <p:progressBar id="progressBarChamada" widgetVar="pbChamada" ajax="true" value="#{selecaoBean.progress}" labelTemplate="{value}%" styleClass="animated">
+                <p:ajax event="complete" update="filtroChamada, :filtroChamada:aviso, progressBarChamada"/>
+            </p:progressBar>
         </p:panel>
+
+        <p:blockUI block="fieldsetChamada" trigger=":filtroChamada:btnRealizarChamada">
+            <h:panelGrid columns="2">
+                <h:graphicImage library="imgs" name="ajaxLoader1.gif" style="margin-right: 12px; vertical-align: middle; max-width: 50px;"/>
+                <h:outputText value="Por favor aguarde, a chamada está sendo realizada..." style="white-space: nowrap;"/>
+            </h:panelGrid>
+        </p:blockUI>
     </ui:define>
 
 </ui:composition>

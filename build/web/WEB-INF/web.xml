@@ -17,6 +17,7 @@
         <param-name>primefaces.THEME</param-name>  
         <param-value>start</param-value>  
     </context-param>
+
     <session-config>
         <session-timeout>
             15

@@ -14,7 +14,6 @@ import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
 import br.com.sescacre.sisrelat.entidades.Horarios;
-import br.com.sescacre.sisrelat.entidades.Inscritos;
 import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;

@@ -61,15 +61,6 @@ public class ChamadaDao {
     public Long contaPresencaDia(Long atividade, Long configuracao, Long sequenciaOcorrcencia, int vbfalta, Date inicio, Date fim) {
         Conexao con = new Conexao();
         Long qtd = 0L;
-        /*Session s = HibernateUtil.getSession();
-         Query q = s.createQuery("select count(*) from Chamada c where c.cdprograma = :programa and c.cdconfig = :conf and c.sqocorrenc = :oco and c.vbfalta = :falta and c.dtaula BETWEEN :inicio and :fim");
-         q.setParameter("programa", atividade);
-         q.setParameter("conf", configuracao);
-         q.setParameter("oco", sequenciaOcorrcencia);
-         q.setParameter("falta", vbfalta);
-         q.setParameter("inicio", inicio);
-         q.setParameter("fim", fim);
-         return (Long) q.uniqueResult();*/
         try {
             Connection conn = con.abreConexao();
             PreparedStatement ps = conn.prepareStatement("SELECT count(*) as qtd FROM cafaltas "
@@ -92,5 +83,45 @@ public class ChamadaDao {
         } finally {
             con.fechaConexao();
         }
+    }
+
+    public boolean excluiLixoMes(Long atividade, Long configuracao, Long sequenciaOcorrcencia, Date inicio, Date fim) {
+        Conexao con = new Conexao();
+        try {
+            Connection conn = con.abreConexao();
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM cafaltas "
+                    + "WHERE cdprograma = ? and cdconfig = ? and sqocorrenc = ? "
+                    + "and dtaula BETWEEN ? and ?");
+            ps.setLong(1, atividade);
+            ps.setLong(2, configuracao);
+            ps.setLong(3, sequenciaOcorrcencia);
+            ps.setDate(4, new java.sql.Date(inicio.getTime()));
+            ps.setDate(5, new java.sql.Date(fim.getTime()));
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir o lixo da chamada: " + e.getMessage());
+            return false;
+        } finally {
+            con.fechaConexao();
+        }
+    }
+
+    public ResultSet contaAtendimentoMes(Connection conn, Long atividade, Long configuracao, Date inicio, Date fim) {
+        ResultSet rs = null;
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT po.dsusuario, HOUR(c.hriniaula) AS Hora, count(*) AS Atendimentos FROM cafaltas c INNER JOIN progocorr po ON "
+                    + "c.cdprograma = po.cdprograma AND c.cdconfig = po.cdconfig AND c.sqocorrenc = po.sqocorrenc "
+                    + "AND c.cdprograma = ? AND c.vbfalta = 1 AND c.cdconfig = ? AND c.dtaula between ? AND ? INNER JOIN programas p ON c.cdprograma = p.cdprograma "
+                    + "GROUP BY dsusuario, HOUR(c.hriniaula)");
+            ps.setLong(1, atividade);
+            ps.setLong(2, configuracao);
+            ps.setDate(3, new java.sql.Date(inicio.getTime()));
+            ps.setDate(4, new java.sql.Date(fim.getTime()));
+            rs = ps.executeQuery();
+        } catch (Exception e) {
+            System.out.println("Erro ao contar as presencas: " + e.getMessage());
+        }
+        return rs;
     }
 }

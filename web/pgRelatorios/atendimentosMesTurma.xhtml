@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/newTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+
+        <p:fieldset legend="Relatório - Atendimento por Mês" style="max-width: 800px;">
+
+            <br/>
+            <br/>
+
+            <h:form id="filtroAtendimentoTurma">
+                <h:panelGrid id="filtro" columns="2" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="uop" value="Unidade Operacional: "/>
+                    <p:selectOneMenu id="uop" required="true" value="#{atendimentosDoMesPorTurma.idUop}"
+                                     immediate="true" label="Unidade Operacional" requiredMessage="O campo 'Unidade Operacional' é obrigatório">
+                        <f:selectItem itemLabel="Selecione uma Unidade Operacional..." itemValue="" /> 
+                        <f:selectItems value="#{atendimentosDoMesPorTurma.listaUops}" var="u"
+                                       itemLabel="#{u.nome}" itemValue="#{u.codigo}" />
+                        <p:ajax update="programa"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="programa" value="Programa: "/>
+                    <p:selectOneMenu id="programa" value="#{atendimentosDoMesPorTurma.idPrograma}"
+                                     immediate="true" label="Programa">
+                        <f:selectItem itemLabel="Selecione um Programa..." itemValue="" /> 
+                        <f:selectItems value="#{atendimentosDoMesPorTurma.listaProgramas}" var="p"
+                                       itemLabel="#{p.nome}" itemValue="#{p.codigo}" />
+                        <p:ajax update="modalidade"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="modalidade" value="Modalidade: "/>
+                    <p:selectOneMenu id="modalidade" value="#{atendimentosDoMesPorTurma.idModalidade}"
+                                     immediate="true" label="Modalidade">
+                        <f:selectItem itemLabel="Selecione uma Modalidade..." itemValue="" /> 
+                        <f:selectItems value="#{atendimentosDoMesPorTurma.listaModalidades}" var="m"
+                                       itemLabel="#{m.nome}" itemValue="#{m.codigo}" />
+                        <p:ajax update="atividade"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="atividade" value="Atividade: "/>
+                    <p:selectOneMenu id="atividade" value="#{atendimentosDoMesPorTurma.idAtividade}"
+                                     immediate="true" label="Atividade">
+                        <f:selectItem itemLabel="Selecione uma Atividade..." itemValue="" /> 
+                        <f:selectItems value="#{atendimentosDoMesPorTurma.listaAtividades}" var="a"
+                                       itemLabel="#{a.nome}" itemValue="#{a.codigo}" />
+                        <p:ajax update="conf"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="conf" value="Ano de Configuração: "/>
+                    <p:selectOneMenu id="conf" required="true" value="#{atendimentosDoMesPorTurma.idConf}"
+                                     immediate="true" label="Ano de Configuração">
+                        <f:selectItem itemLabel="Selecione um ano..." itemValue="" /> 
+                        <f:selectItems value="#{atendimentosDoMesPorTurma.listaConfiguracoes}" var="conf"
+                                       itemLabel="#{conf.nome}" itemValue="#{conf.codigo}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="mes" value="Mês:"/>
+                    <p:calendar id="mes" locale="pt" label="Mês" value="#{atendimentosDoMesPorTurma.dataChamada}" required="true" navigator="true"
+                                pattern="MM/yyyy" immediate="true"/>
+                </h:panelGrid>
+                <br/>
+                <div style="float: right;">
+                    <p:commandButton value="Filtrar" ajax="false" action="#{atendimentosDoMesPorTurma.gerarRelatorioWeb()}" immediate="false" onclick="this.form.target = '_blank'"/>
+                    <p:spacer width="5" height="0"/>
+                    <p:commandButton value="Limpar" update="filtroAtendimentoTurma" action="#{atendimentosDoMesPorTurma.limparCampos()}" immediate="true" process="@this"/>
+                </div>
+            </h:form>
+            <br />
+            <div style="float: left; font-size: 11px; font-weight:bold;">
+                * Campo obrigatório
+            </div>
+            <br/>
+        </p:fieldset>
+    </ui:define>
+
+</ui:composition>

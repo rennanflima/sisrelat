@@ -8,7 +8,6 @@ package br.com.sescacre.sisrelat.dao;
 
 import br.com.sescacre.sisrelat.util.Conexao;
 import br.com.sescacre.sisrelat.entidades.Programa;
-import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -72,13 +71,13 @@ public class ProgramaDao {
         return lista;
     }
     
-    public Programa pegaPorId(int id){
+    public Programa pegaPorId(Long id){
         Conexao con = new Conexao();
         Programa programa = new Programa();
         try {
             Connection conn = con.abreConexao();
             PreparedStatement ps = conn.prepareStatement("SELECT cdprograma, nmprograma FROM PROGRAMAS WHERE cdprograma = ?");
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 programa.setCodigo(rs.getLong("CDPROGRAMA"));

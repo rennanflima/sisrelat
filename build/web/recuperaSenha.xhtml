@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/templateLogin.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <h:form id="reenviaSenha">
+            <p:growl id="aviso" life="5000"/>
+            <p:dialog id="recupera" header="Recuperação de Senha" visible="true" closable="false" draggable="false" resizable="false" style="font-size: 12px;">
+                <h:panelGrid  columns="3" cellpadding="4" cellspacing="10">
+                    <p:outputLabel for="mat" value="Matrícula: "/>
+                    <p:inputText id="mat" required="true" value="#{trocaSenhaBean.mat}" label="Matrícula" size="10"
+                                 onkeypress="return SomenteNumero(event)" requiredMessage="O campo 'Matrícula' é obrigatório"
+                                 converterMessage="Digite apenas número na Matrícula!" validatorMessage="O campo 'Matrícula' deve conter no mínimo dois digitos">
+                        <f:validateLength minimum="2" /> 
+                        <f:convertNumber integerOnly="true"/>
+                    </p:inputText>
+                    <p:message id="msgMat" for="mat" display="icon"/>
+
+                    <p:outputLabel for="login" value="Usuário: "/>
+                    <p:inputText id="login" required="true" value="#{trocaSenhaBean.login}" 
+                                 label="Login" size="30" maxlength="20"
+                                 requiredMessage="O campo 'Login' é obrigatório">
+                    </p:inputText>
+                    <p:message id="msgLogin" for="login" display="icon"/>
+                </h:panelGrid>
+                <div style="float: right">
+                    <p:commandButton value="Enviar" update="reenviaSenha, aviso" action="#{trocaSenhaBean.esqueciSenha()}"/>
+                    <p:commandButton value="Limpar" update="reenviaSenha" action="#{trocaSenhaBean.limpaRecupera()}" immediate="true" process="@this"/>
+                    <p:commandButton value="Cancelar" action="/index.xhtml" ajax="false" immediate="true" process="@this"/>
+                </div>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

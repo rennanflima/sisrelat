@@ -16,12 +16,16 @@
             <h:panelGrid columns="2" cellpadding="4" cellspacing="10">
                 <h:outputText value="Total de incritos: "/>
                 <h:outputText value="#{selecaoBean.totalInscritos}" style="font-weight:bold"/>
-                
-                <h:outputText value="Total de faltas: "/>
+
+                <h:outputText value="Total de faltas (mês): "/>
                 <h:outputText value="#{selecaoBean.faltas}" style="font-weight:bold"/>
 
-                <h:outputText value="Total de atendimentos: "/>
+                <h:outputText value="Total de presenças (mês): "/>
                 <h:outputText value="#{selecaoBean.atendimentos}" style="font-weight:bold"/>
+
+                <h:outputText value="Duração: "/>
+                <h:outputText value="#{selecaoBean.duracaoChamada}" style="font-weight:bold"/>
+
             </h:panelGrid>
         </p:fieldset>
     </ui:define>

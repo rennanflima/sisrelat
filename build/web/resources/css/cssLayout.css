@@ -60,23 +60,45 @@
   text-decoration : underline;
 }
 
-.login {
-    background: repeat-x 50% 50% #DCEBF7;
+#entrar {
+    background: #0078ae url('/sisrelat/javax.faces.resource/images/ui-bg_glass_45_0078ae_1x400.png.xhtml?ln=primefaces-start') repeat-x scroll 50% 50% ;
     border: 1px solid #77D5F7;
-    color: #1D5987;
+    color: #FFFFFF;
     cursor: pointer;
     padding: 0.4em 1em;
     border-radius: 5px 5px 5px;
     text-align: center;
-    font-weight: bold;
-    font-size: 1.1em;
-    
+    font-weight: normal;
+    font-size: 1em;
+}
+
+#entrar:hover{
+    background: #79c9ec url('/sisrelat/javax.faces.resource/images/ui-bg_glass_75_79c9ec_1x400.png.xhtml?ln=primefaces-start') repeat-x scroll 50% 50%;
+    border: 1px solid #448dae;
+    color: #026890;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+#entrar:active{
+    background: #6eac2c url('/sisrelat/javax.faces.resource/images/ui-bg_gloss-wave_50_6eac2c_500x100.png.xhtml?ln=primefaces-start') repeat-x scroll 50% 50% ;
+    border: 1px solid #acdd4a;
+    color: #FFFFFF;
+    font-weight: normal;
+    font-size: 1em;
 }
 
 .corpoLogin{
-   min-height: 65%;
+   background-image: url('../imgs/fundo.jpg');
+   background-repeat: no-repeat;
+   background-position: center;
+   background-attachment: fixed;
+   background-size: 100%;
+   padding-bottom: 40px;
+   padding-top: 5px;
+   //min-height: 65%;
 }
 
 .animated .ui-progressbar-value{
-    background-image: url("../imgs/pbar-ani.gif");
+    background-image: url("../imgs/pbar-ani2.gif");
 }

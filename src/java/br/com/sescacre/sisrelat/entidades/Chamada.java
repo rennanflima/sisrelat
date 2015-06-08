@@ -46,6 +46,25 @@ public class Chamada implements Serializable, Comparable<Chamada>{
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date hratu;
 
+    public Chamada() {
+    }
+
+    public Chamada(Long sqmatric, Long cduop, Long cdprograma, Long cdconfig, Long sqocorrenc, Date dtaula, Date hriniaula, boolean vbfalta, String lgatu, Date dtatu, Date hratu) {
+        this.sqmatric = sqmatric;
+        this.cduop = cduop;
+        this.cdprograma = cdprograma;
+        this.cdconfig = cdconfig;
+        this.sqocorrenc = sqocorrenc;
+        this.dtaula = dtaula;
+        this.hriniaula = hriniaula;
+        this.vbfalta = vbfalta;
+        this.lgatu = lgatu;
+        this.dtatu = dtatu;
+        this.hratu = hratu;
+    }
+
+    
+    
     public Long getSqmatric() {
         return sqmatric;
     }

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="inscritosTurma" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="565" leftMargin="15" rightMargin="15" topMargin="20" bottomMargin="20" uuid="f60f60c9-be59-48b7-b9c8-80d0617db524">
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="377"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="atividade" class="java.lang.String"/>
+	<parameter name="mes" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT po.dsusuario, HOUR(c.hriniaula) AS hora, count(*) AS atendimentos FROM cafaltas c INNER JOIN progocorr po ON
+c.cdprograma = po.cdprograma AND c.cdconfig = po.cdconfig AND c.sqocorrenc = po.sqocorrenc
+AND c.cdprograma = 1460026 AND c.vbfalta = 1 AND c.cdconfig = 2850006 AND c.dtaula between '01/04/2015' AND '30/04/2015' INNER JOIN programas p ON
+c.cdprograma = p.cdprograma
+GROUP BY dsusuario, HOUR(c.hriniaula)]]>
+	</queryString>
+	<field name="DSUSUARIO" class="java.lang.String"/>
+	<field name="HORA" class="java.lang.Integer"/>
+	<field name="ATENDIMENTOS" class="java.lang.Integer"/>
+	<variable name="qtdInsc" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{ATENDIMENTOS}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="555" height="156" uuid="de2c1a3d-3eca-47dc-998a-d5c24dc99a3f"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="62" y="756" width="465" height="15" uuid="e4e33609-1a9e-4441-b770-72758ec0ec35"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sesc - Serviço Social do Comércio | Departamento Regional no Acre | www.sescacre.com.br]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="62" y="771" width="465" height="15" uuid="a27296e2-ff37-4d30-8370-6221baa01ada"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[Av. Getúlio Vargas, 2.472 - Bairro Bosque, Condomínio Antonio Oliveira Santos - Rio Branco/Acre]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="755" width="565" height="1" uuid="a731351b-851e-4321-adde-5b1f70f169ac"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="736" width="100" height="20" uuid="d9e93306-40aa-462e-ab78-3c269756446e"/>
+				<text><![CDATA[Relatório gerado em:]]></text>
+			</staticText>
+			<textField pattern="EEEE, dd&apos; de &apos;MMMM&apos; de &apos;yyyy&apos; às &apos;HH:mm:ss&apos; UTC &apos;Z">
+				<reportElement x="101" y="736" width="465" height="20" uuid="aa80905a-86b2-42be-854b-5bed32d1a8df"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="71" y="786" width="435" height="15" uuid="dce0f244-a0c3-480f-89cc-57b9addc0ade"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[CEP: 69.900-589 - Fone/Fax (68) 3302-2850]]></text>
+			</staticText>
+		</band>
+	</background>
+	<title>
+		<band height="198" splitType="Stretch">
+			<textField>
+				<reportElement x="446" y="22" width="80" height="20" uuid="adc84958-685c-4979-9cd2-4977c47ce597"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="526" y="22" width="40" height="20" uuid="7014fce5-f745-48d4-ae99-e1112cd3bad9"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="62" y="178" width="70" height="20" uuid="4f874431-e164-4e3a-8f98-5080f6774d4c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Atividade:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="96" width="564" height="33" uuid="d9493d15-5edf-4b25-a2d7-78c12f3f47b6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório de Atendimentos]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="133" y="177" width="100" height="20" uuid="f8c95fcd-c6e1-4f8a-94f0-7faac737550a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{atividade}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="206" y="129" width="76" height="33" uuid="f33b0075-a6b4-4baa-85f2-9ed985cabe47"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[do Mês ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="277" y="129" width="79" height="33" uuid="498ef73e-559e-421e-87ba-b8053520b450"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{mes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="148" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+			<textField>
+				<reportElement x="446" y="22" width="80" height="20" uuid="05d3f39e-57fa-4c24-b3f5-ef45f365f923"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="526" y="22" width="40" height="20" uuid="350eeda1-e89f-4d1d-b5a5-dc2c28e383d6"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="20" width="332" height="20" backcolor="#CCCCCC" uuid="b84d52db-f80a-4976-83f0-442f1d66bbfd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TURMAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="333" y="20" width="77" height="20" backcolor="#CCCCCC" uuid="c0939fa2-4ebf-47bb-bae2-7fccd52dabb7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="410" y="20" width="154" height="20" backcolor="#CCCCCC" uuid="a526a0a8-bbe1-4dc3-9313-a23b689b9d3b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ATENDIMENTOS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="22" width="565" height="1" uuid="3878f157-8bab-4f24-8cf7-77338f508da3"/>
+			</line>
+			<textField>
+				<reportElement x="1" y="0" width="332" height="20" uuid="188d71a3-e74c-49e3-95ef-7cf3f914890d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DSUSUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="333" y="0" width="77" height="20" uuid="c58cf542-9edc-417f-9784-26ec9037f51f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="0" width="154" height="20" uuid="b0b7b97b-839d-4596-be0d-be96baf79e02"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ATENDIMENTOS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="78" splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="117">
+			<staticText>
+				<reportElement x="1" y="15" width="88" height="20" uuid="0c77302b-1f49-4cdb-9af4-cd2c9dbd72d2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de Inscritos:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="15" width="100" height="20" uuid="2343331c-e475-4fbb-bc3f-fe97d055b6a1"/>
+				<textFieldExpression><![CDATA[$V{qtdInsc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<noData>
+		<band height="802">
+			<staticText>
+				<reportElement x="0" y="96" width="564" height="33" uuid="6e6734ed-f460-43a4-a0af-2e3239a33578"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório de Atendimentos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="250" width="564" height="20" uuid="944de5b8-0675-4edf-b0f4-ca4b47dbcc6b"/>
+				<textElement textAlignment="Center">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Este relatório não pode ser gerado, pois não há informações necessárias]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="22" width="75" height="20" uuid="ef215f7d-240e-4898-9255-e3e5cf5a0afd"/>
+				<text><![CDATA[Página 1 de 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="129" width="76" height="33" uuid="21e86487-8810-4b0f-b384-eac1a9103e21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[do Mês ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="272" y="129" width="79" height="33" uuid="bffef297-6925-4ca0-8ae5-f296ed065dc7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{mes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

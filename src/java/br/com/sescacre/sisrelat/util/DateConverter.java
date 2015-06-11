@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -41,6 +42,15 @@ public class DateConverter {
     public static Date convertLocalDateToDate(LocalDate attribute) {
         Instant instant = attribute.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
+    }
+    
+    public static Date convertYearMonthToDate(YearMonth attribute) {
+        Instant instant = attribute.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
+    public static YearMonth convertDateToYearMonth(Date dbData) {
+        return YearMonth.from(convertDateToLocalDate(dbData));
     }
 }
 

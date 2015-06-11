@@ -174,6 +174,7 @@ public class FuncionariosBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             ex.getMessage(), null));
         } catch (Exception e) {
+            e.printStackTrace();
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Ocorreu um erro ao inserir o funcionário " + funcionario.getNome(), null));
@@ -195,6 +196,7 @@ public class FuncionariosBean implements Serializable {
                             "O funcionário " + funcionario.getNome() + " foi excluído com sucesso.", null));
             funcionario = new Funcionarios();
         } catch (Exception e) {
+            e.printStackTrace();
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Ocorreu um erro ao excluir o funcionário " + funcionario.getNome(), null));

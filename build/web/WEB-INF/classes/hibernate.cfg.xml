@@ -4,15 +4,16 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/chamada?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.url">jdbc:mysql://192.168.0.222:3306/chamada_web?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">root</property>
+    <property name="hibernate.connection.password">535cWebMysql</property>
     
-    <mapping class="br.com.sescacre.sisrelat.entidades.Chamada"/>
+    <!--<mapping class="br.com.sescacre.sisrelat.entidades.Chamada"/>-->
     <mapping class="br.com.sescacre.sisrelat.entidades.Usuarios"/>
     <mapping class="br.com.sescacre.sisrelat.entidades.Cargos"/>
     <mapping class="br.com.sescacre.sisrelat.entidades.Setores"/>
     <mapping class="br.com.sescacre.sisrelat.entidades.CargosDoSetor"/>
     <mapping class="br.com.sescacre.sisrelat.entidades.Funcionarios"/>
+    <mapping class="br.com.sescacre.sisrelat.entidades.HistoricoChamada"/>
   </session-factory>
 </hibernate-configuration>

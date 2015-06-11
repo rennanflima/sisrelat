@@ -52,9 +52,9 @@ public class UsuarioBean implements Serializable {
         Usuarios us = new UsuariosDao().pesquisaPorId(usuario.getLogin());
         try {
             if (us.getAutorizacao().equals("ROLE_GER")) {
-                msg.getExternalContext().redirect("/sisrelat/admin");
+                msg.getExternalContext().redirect("/chamadaweb/admin");
             } else if (us.getAutorizacao().equals("ROLE_TEC")) {
-                msg.getExternalContext().redirect("/sisrelat/tecnico");
+                msg.getExternalContext().redirect("/chamadaweb/tecnico");
             }
         } catch (Exception e) {
             msg.addMessage(null,

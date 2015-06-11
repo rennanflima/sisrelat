@@ -7,18 +7,14 @@ package br.com.sescacre.sisrelat.relatorios;
 
 import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
-import br.com.sescacre.sisrelat.dao.InscricaoDao;
-import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
 import br.com.sescacre.sisrelat.entidades.Programa;
-import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
 import br.com.sescacre.sisrelat.entidades.UnidadeOperacional;
 import br.com.sescacre.sisrelat.util.Conexao;
 import br.com.sescacre.sisrelat.util.DateConverter;
-import java.io.File;
-import java.io.FileInputStream;
+import br.com.sescacre.sisrelat.util.GeraRelatorioPDF;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,11 +32,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
-import net.sf.jasperreports.engine.JasperRunManager;
 
 /**
  *
@@ -188,34 +180,13 @@ public class AtendimentosDoMesPorTurma implements Serializable {
         ResultSet rs = new ChamadaDao().contaAtendimentoMes(conn, idAtividade, idConf, inicio, fim);
         JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
         //está passando null para a map pois o relatório não precisa de parametros
-        Map<String, Object> par = new HashMap<String, Object>();
+        Map<String, Object> par = new HashMap<>();
         par.put("logo", context.getRealPath("WEB-INF/relatorios/topo.jpg"));
         par.put("atividade", programa.getNome());
         par.put("mes", anoMes.format(DateTimeFormatter.ofPattern("MM/yyyy")));
-        gerarPDF(jrRS, par, arquivo);
+        GeraRelatorioPDF.gerarPDF(jrRS, par, arquivo);
         con.fechaConexao();
         limparCampos();
-    }
-
-    private void gerarPDF(JRDataSource jrRS, Map<String, Object> parametros, String arquivo) {
-        ServletOutputStream servletOutputStream = null;
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        try {
-            servletOutputStream = response.getOutputStream();
-            //gera o relatório em pdf criando um relatório pdf temporário
-            JasperRunManager.runReportToPdfStream(new FileInputStream(new File(arquivo)), response.getOutputStream(), parametros, jrRS);
-            //diz ao navegador o tipo de documento da resposta, nesse caso pdf
-            response.setContentType("application/pdf");
-            //envia para o navegador o relatório
-            servletOutputStream.flush();
-            servletOutputStream.close();
-
-            context.renderResponse();
-            context.responseComplete();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public String limparCampos() {

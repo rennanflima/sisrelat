@@ -73,7 +73,7 @@
                 <div style="float: right;">
                     <p:commandButton value="Filtrar" ajax="false" action="#{inscritosTurma.gerarRelatorioWeb()}" immediate="false" onclick="this.form.target = '_blank'" />
                     <p:spacer width="5" height="0"/>
-                    <p:commandButton value="Limpar" update="filtroInscritos" action="#{selecaoBean.limparCampos()}" immediate="true" process="@this"/>
+                    <p:commandButton value="Limpar" update="filtroInscritos" action="#{inscritosTurma.limparCampos()}" immediate="true" process="@this"/>
                 </div>
             </h:form>
             <br />

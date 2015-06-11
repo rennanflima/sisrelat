@@ -7,12 +7,14 @@ package br.com.sescacre.sisrelat.bean;
 
 import br.com.sescacre.sisrelat.dao.ChamadaDao;
 import br.com.sescacre.sisrelat.dao.ConfiguracaoProgramaDao;
+import br.com.sescacre.sisrelat.dao.HistoricoChamadaDao;
 import br.com.sescacre.sisrelat.dao.HorariosDAO;
 import br.com.sescacre.sisrelat.dao.InscricaoDao;
 import br.com.sescacre.sisrelat.dao.ProgramaCorrenteDao;
 import br.com.sescacre.sisrelat.dao.ProgramaDao;
 import br.com.sescacre.sisrelat.dao.UnidadeOperacionalDao;
 import br.com.sescacre.sisrelat.entidades.ConfiguracaoPrograma;
+import br.com.sescacre.sisrelat.entidades.HistoricoChamada;
 import br.com.sescacre.sisrelat.entidades.Horarios;
 import br.com.sescacre.sisrelat.entidades.Programa;
 import br.com.sescacre.sisrelat.entidades.ProgramaCorrente;
@@ -32,6 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -273,9 +277,11 @@ public class SelecaoBean implements Serializable {
     }
 
     public String realizaChamada() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
         FacesContext msg = FacesContext.getCurrentInstance();
         progocor = new ProgramaCorrenteDao().pegaPorId(idAtividade, idConf, idTurma);
         Map<DayOfWeek, Horarios> horarios = new HorariosDAO().pegaHorarioDaAtividade(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia());
+        HistoricoChamadaDao hcd = new HistoricoChamadaDao();
         Calendar c = Calendar.getInstance();
         c.setTime(dataChamada);
         int mes = c.get(Calendar.MONTH) + 1;
@@ -288,61 +294,88 @@ public class SelecaoBean implements Serializable {
         LocalDateTime inicioChamada = LocalDateTime.now();
         System.out.println("Início da chamada: " + inicioChamada.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
         System.out.println();
-        boolean lixoExcluido = new ChamadaDao().excluiLixoMes(progocor.getPrograma(), progocor.getConfiguracaoPrograma(),
-                progocor.getSequenciaOcorrencia(), DateConverter.convertLocalDateToDate(anoMes.atDay(1)),
-                DateConverter.convertLocalDateToDate(anoMes.atDay(anoMes.lengthOfMonth())));
-        if (lixoExcluido) {
-            for (int dia = 1; dia <= anoMes.lengthOfMonth(); dia++) {
-                Horarios h = new Horarios();
-                LocalDate data = anoMes.atDay(dia);
-                if (dia == anoMes.lengthOfMonth()) {
-                    setProgress(99);
-                } else {
-                    setProgress((dia * 100) / anoMes.lengthOfMonth());
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
-                    h = horarios.get(DayOfWeek.MONDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.TUESDAY)) {
-                    h = horarios.get(DayOfWeek.TUESDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.WEDNESDAY)) {
-                    h = horarios.get(DayOfWeek.WEDNESDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
-                    h = horarios.get(DayOfWeek.THURSDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
-                    h = horarios.get(DayOfWeek.FRIDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-                    h = horarios.get(DayOfWeek.SATURDAY);
-                }
-                if (data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-                    h = horarios.get(DayOfWeek.SUNDAY);
-                }
-                if (h != null) {
-                    LocalTime horaInicio = h.getHoraInicio().toLocalTime();
-                    LocalTime horaFim = h.getHoraTermino().toLocalTime();
-                    Duration duration = Duration.between(horaInicio, horaFim);
-                    if (duration.toHours() <= 1) {
-                        RealizarChamada.turmasHorarioFixo(progocor, h, data, user);
+
+        HistoricoChamada historico = new HistoricoChamada();
+        historico.setCdconfig(progocor.getConfiguracaoPrograma());
+        historico.setCdprograma(progocor.getPrograma());
+        historico.setSqocorrenc(progocor.getSequenciaOcorrencia());
+        historico.setUsuario(user.getLogin());
+        historico.setMes(DateConverter.convertYearMonthToDate(anoMes));
+
+        boolean fezChamada = hcd.pesquisaChamada(historico.getCdprograma(),
+                historico.getCdconfig(), historico.getSqocorrenc(), historico.getMes());
+
+        if (fezChamada) {
+            boolean lixoExcluido = new ChamadaDao().excluiLixoMes(progocor.getPrograma(), progocor.getConfiguracaoPrograma(),
+                    progocor.getSequenciaOcorrencia(), DateConverter.convertLocalDateToDate(anoMes.atDay(1)),
+                    DateConverter.convertLocalDateToDate(anoMes.atDay(anoMes.lengthOfMonth())));
+            if (lixoExcluido) {
+                for (int dia = 1; dia <= anoMes.lengthOfMonth(); dia++) {
+                    Horarios h = new Horarios();
+                    LocalDate data = anoMes.atDay(dia);
+                    if (dia == anoMes.lengthOfMonth()) {
+                        setProgress(99);
                     } else {
-                        RealizarChamada.turmaHorarioLivre(progocor, h, data, user);
+                        setProgress((dia * 100) / anoMes.lengthOfMonth());
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
+                        h = horarios.get(DayOfWeek.MONDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.TUESDAY)) {
+                        h = horarios.get(DayOfWeek.TUESDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.WEDNESDAY)) {
+                        h = horarios.get(DayOfWeek.WEDNESDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
+                        h = horarios.get(DayOfWeek.THURSDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
+                        h = horarios.get(DayOfWeek.FRIDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
+                        h = horarios.get(DayOfWeek.SATURDAY);
+                    }
+                    if (data.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                        h = horarios.get(DayOfWeek.SUNDAY);
+                    }
+                    if (h != null) {
+                        LocalTime horaInicio = h.getHoraInicio().toLocalTime();
+                        LocalTime horaFim = h.getHoraTermino().toLocalTime();
+                        Duration duration = Duration.between(horaInicio, horaFim);
+                        if (duration.toHours() <= 1) {
+                            RealizarChamada.turmasHorarioFixo(progocor, h, data, user);
+                        } else {
+                            RealizarChamada.turmaHorarioLivre(progocor, h, data, user);
+                        }
                     }
                 }
+                setProgress(100);
+                LocalDateTime terminoChamada = LocalDateTime.now();
+                System.out.println("Termino da chamada: " + terminoChamada.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+                Duration d = Duration.between(inicioChamada, terminoChamada);
+                historico.setDatachamada(new Date());
+                
+                try {
+                    hcd.salvar(historico);
+                } catch (Exception ex) {
+                    msg.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Ocorreu um erro ao salvar o histórico da chamada da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + "", null));
+                }
+                
+                duracaoChamada = LocalTime.ofNanoOfDay(d.toNanos()).format(DateTimeFormatter.ISO_LOCAL_TIME);
+                return "chamadaCompleta";
+            } else {
+                msg.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Ocorreu um erro ao exluir a chamada remanescente da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + "", null));
+                return null;
             }
-            setProgress(100);
-            LocalDateTime terminoChamada = LocalDateTime.now();
-            System.out.println("Termino da chamada: " + terminoChamada.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-            Duration d = Duration.between(inicioChamada, terminoChamada);
-            duracaoChamada = LocalTime.ofNanoOfDay(d.toNanos()).format(DateTimeFormatter.ISO_LOCAL_TIME);
-            return "chamadaCompleta";
         } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Ocorreu um erro ao exluir a chamada remanescente da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + "", null));
+                            "A chamada da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + " já foi realizada", null));
             return null;
         }
     }

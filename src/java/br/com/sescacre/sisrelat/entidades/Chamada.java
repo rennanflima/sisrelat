@@ -10,40 +10,36 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
  *
  * @author Rennan Francisco
  */
-@Entity
-@Table(name = "CAFALTAS")
+//@Entity
+//@Table(name = "CAFALTAS")
 public class Chamada implements Serializable, Comparable<Chamada>{
 
-    @Id
+    //@Id
     private Long sqmatric;
-    @Id
+    //@Id
     private Long cduop;
-    @Id
+    //@Id
     private Long cdprograma;
-    @Id
+   //@Id
     private Long cdconfig;
-    @Id
+   // @Id
     private Long sqocorrenc;
-    @Id
-    @Temporal(javax.persistence.TemporalType.DATE)
+    //@Id
+    //@Temporal(javax.persistence.TemporalType.DATE)
     private Date dtaula;
-    @Id
-    @Temporal(javax.persistence.TemporalType.TIME)
+    //@Id
+    //@Temporal(javax.persistence.TemporalType.TIME)
     private Date hriniaula;
     private boolean vbfalta = false;
     private String lgatu;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    //@Temporal(javax.persistence.TemporalType.DATE)
     private Date dtatu;
-    @Temporal(javax.persistence.TemporalType.TIME)
+    //@Temporal(javax.persistence.TemporalType.TIME)
     private Date hratu;
 
     public Chamada() {

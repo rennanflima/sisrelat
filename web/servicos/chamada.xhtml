@@ -79,6 +79,7 @@
                             <p:ajax global="false"/>
                         </p:commandButton>
                         <p:spacer width="5" height="0"/>
+                    <p:commandButton value="Limpar" update="filtroChamada" action="#{selecaoBean.limparCampos()}" immediate="true" process="@this"/>
                     </div>
                 </h:form>
             </div>

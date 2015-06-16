@@ -299,13 +299,13 @@ public class SelecaoBean implements Serializable {
         historico.setCdconfig(progocor.getConfiguracaoPrograma());
         historico.setCdprograma(progocor.getPrograma());
         historico.setSqocorrenc(progocor.getSequenciaOcorrencia());
-        historico.setUsuario(user.getLogin());
+        historico.setUsuario(user);
         historico.setMes(DateConverter.convertYearMonthToDate(anoMes));
 
-        boolean fezChamada = hcd.pesquisaChamada(historico.getCdprograma(),
+        HistoricoChamada fezChamada = hcd.pesquisaChamada(historico.getCdprograma(),
                 historico.getCdconfig(), historico.getSqocorrenc(), historico.getMes());
-
-        if (fezChamada) {
+        
+        if (fezChamada == null || !fezChamada.equals(historico)) {
             boolean lixoExcluido = new ChamadaDao().excluiLixoMes(progocor.getPrograma(), progocor.getConfiguracaoPrograma(),
                     progocor.getSequenciaOcorrencia(), DateConverter.convertLocalDateToDate(anoMes.atDay(1)),
                     DateConverter.convertLocalDateToDate(anoMes.atDay(anoMes.lengthOfMonth())));
@@ -376,6 +376,7 @@ public class SelecaoBean implements Serializable {
             msg.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "A chamada da turma '" + progocor.getDescricao() + "' do mês " + anoMes.format(formatter) + " já foi realizada", null));
+            limparCampos();
             return null;
         }
     }

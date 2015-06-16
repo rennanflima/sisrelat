@@ -148,7 +148,7 @@ public class FuncionariosBean implements Serializable {
                 msg.addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO,
                                 "O funcionário " + funcionario.getNome() + " foi inserido com sucesso.", null));
-                verificaEnvio = enviaEmail.enviaCad(funcionario.getEmail(), "Acesso ao Sistema de Relatórios e Faltas", funcionario.getUser().getLogin(), pass);
+                verificaEnvio = enviaEmail.enviaCad(funcionario.getEmail(), "Acesso ao Sistema de Chamada Web do Sesc-DR/AC", funcionario.getUser().getLogin(), pass);
                 if (verificaEnvio) {
                     msg.addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_INFO,

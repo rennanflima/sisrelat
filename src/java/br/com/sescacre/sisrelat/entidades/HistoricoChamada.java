@@ -12,6 +12,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -31,8 +33,9 @@ public class HistoricoChamada implements Serializable {
     @Id
     @Temporal(TemporalType.DATE)
     private Date mes;
-    @Column(nullable = false, length = 30)
-    private String usuario;
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private Usuarios usuario = new Usuarios();
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_chamada")
     private Date datachamada;
@@ -69,11 +72,11 @@ public class HistoricoChamada implements Serializable {
         this.mes = mes;
     }
 
-    public String getUsuario() {
+    public Usuarios getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
+    public void setUsuario(Usuarios usuario) {
         this.usuario = usuario;
     }
 

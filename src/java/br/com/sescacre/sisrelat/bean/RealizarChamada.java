@@ -49,7 +49,7 @@ public class RealizarChamada implements Serializable {
         List<Inscritos> inscritos = new InscricaoDao().inscritosTurma(progocor.getPrograma(), progocor.getConfiguracaoPrograma(), progocor.getSequenciaOcorrencia());
         Date hi = DateConverter.convertLocalDateTimeToDate(h.getHoraInicio());
         Date hf = DateConverter.convertLocalDateTimeToDate(h.getHoraTermino());
-        List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, h.getHoraInicio().toLocalTime(), h.getHoraTermino().toLocalTime());
+        List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDia(data, h.getHoraInicio().minusMinutes(15).toLocalTime(), h.getHoraTermino().toLocalTime());
         for (Inscritos insc : inscritos) {
             Chamada presenca = new Chamada();
             presenca.setSqmatric(insc.getSqMatric());
@@ -112,7 +112,7 @@ public class RealizarChamada implements Serializable {
         Date hf = DateConverter.convertLocalDateTimeToDate(h.getHoraTermino());
         // percorre a lista de inscritos da turma
         inscritos.stream().forEach((insc) -> {
-            List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, h.getHoraInicio().toLocalTime(), h.getHoraTermino().toLocalTime(), insc.getSqMatric());
+            List<PactoAcesso> lista = new PactoAcessoDao().acessoDoDiaAluno(data, h.getHoraInicio().minusMinutes(15).toLocalTime(), h.getHoraTermino().toLocalTime(), insc.getSqMatric());
             CopyOnWriteArrayList<Acesso> listaAcessoAluno = new CopyOnWriteArrayList<>();
             //situaçao pensada para apenas uma entrada no dia
             int contaEntradaDia = 0;
@@ -217,7 +217,7 @@ public class RealizarChamada implements Serializable {
                             LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
                             LocalDateTime temp = h.getHoraInicio();
                             //Loop enquanto a hora da temp for menor ou igual a hora de termino da atividade
-                            while (temp.getHour() <= h.getHoraTermino().getHour()) {
+                            while (temp.getHour() < h.getHoraTermino().getHour()) {
                                 //temp entre a hora de entrada e a hora de saida
                                 if (temp.getHour() >= entrada.getHour() && temp.getHour() <= saida.getHour()) {
                                     LocalDateTime tmp = entrada;
@@ -229,7 +229,8 @@ public class RealizarChamada implements Serializable {
                                                 insc.getCdConfig(),
                                                 insc.getSqOcorrenc(),
                                                 DateConverter.convertLocalDateToDate(data),
-                                                (!tmp.isAfter(saida) ? DateConverter.convertLocalDateTimeToDate(tmp)
+                                                (!tmp.isAfter(saida) ? (!tmp.isBefore(h.getHoraInicio()) ? DateConverter.convertLocalDateTimeToDate(tmp)
+                                                                            : DateConverter.convertLocalDateTimeToDate(h.getHoraInicio()))
                                                     : DateConverter.convertLocalDateTimeToDate(saida)),
                                                 true,
                                                 user.getLogin(),
@@ -250,15 +251,16 @@ public class RealizarChamada implements Serializable {
                             // tem só a entrada
                         } else {
                             LocalDateTime temp = h.getHoraInicio();
-                            while (temp.getHour() <= h.getHoraTermino().getHour()) {
-                                if (temp.getHour() == entrada.getHour()) {
+                            while (temp.getHour() < h.getHoraTermino().getHour()) {
+                                if (temp.getHour() == entrada.getHour() || entrada.isBefore(h.getHoraInicio())) {
                                     Chamada presenca = new Chamada(insc.getSqMatric(),
                                                 insc.getCdUop(),
                                                 insc.getCdPrograma(),
                                                 insc.getCdConfig(),
                                                 insc.getSqOcorrenc(),
                                                 DateConverter.convertLocalDateToDate(data),
-                                                DateConverter.convertLocalDateTimeToDate(entrada),
+                                                (!entrada.isBefore(h.getHoraInicio()) ? DateConverter.convertLocalDateTimeToDate(temp)
+                                                                            : DateConverter.convertLocalDateTimeToDate(h.getHoraInicio())),
                                                 true,
                                                 user.getLogin(),
                                                 new Date(),
@@ -276,7 +278,7 @@ public class RealizarChamada implements Serializable {
                         if (acesso.getSaida() != null) {
                             LocalDateTime saida = DateConverter.convertDateToLocalDateTime(acesso.getSaida().getDataHora());
                             LocalDateTime temp = h.getHoraInicio();
-                            while (temp.getHour() <= h.getHoraTermino().getHour()) {
+                            while (temp.getHour() < h.getHoraTermino().getHour()) {
                                 if (temp.getHour() == saida.getHour()) {
                                     Chamada presenca = new Chamada(insc.getSqMatric(),
                                                 insc.getCdUop(),
@@ -300,7 +302,7 @@ public class RealizarChamada implements Serializable {
                 });
                 //falta
                 LocalDateTime temp = h.getHoraInicio();
-                while (temp.getHour() <= h.getHoraTermino().getHour()) {
+                while (temp.getHour() < h.getHoraTermino().getHour()) {
                     for (Acesso acesso : listaAcessoAluno) {
                         if (acesso.getEntrada() != null) {
                             LocalDateTime entrada = DateConverter.convertDateToLocalDateTime(acesso.getEntrada().getDataHora());
@@ -314,8 +316,7 @@ public class RealizarChamada implements Serializable {
                                         insc.getCdConfig(),
                                         insc.getSqOcorrenc(),
                                         DateConverter.convertLocalDateToDate(data),
-                                        (!temp.isAfter(h.getHoraTermino()) ? DateConverter.convertLocalDateTimeToDate(temp)
-                                            : DateConverter.convertLocalDateTimeToDate(h.getHoraTermino())),
+                                        DateConverter.convertLocalDateTimeToDate(temp),
                                         false,
                                         user.getLogin(),
                                         new Date(),
@@ -336,8 +337,7 @@ public class RealizarChamada implements Serializable {
                                         insc.getCdConfig(),
                                         insc.getSqOcorrenc(),
                                         DateConverter.convertLocalDateToDate(data),
-                                        (!temp.isAfter(h.getHoraTermino()) ? DateConverter.convertLocalDateTimeToDate(temp)
-                                            : DateConverter.convertLocalDateTimeToDate(h.getHoraTermino())),
+                                        DateConverter.convertLocalDateTimeToDate(temp),
                                         false,
                                         user.getLogin(),
                                         new Date(),
@@ -361,8 +361,7 @@ public class RealizarChamada implements Serializable {
                                         insc.getCdConfig(),
                                         insc.getSqOcorrenc(),
                                         DateConverter.convertLocalDateToDate(data),
-                                        (!temp.isAfter(h.getHoraTermino()) ? DateConverter.convertLocalDateTimeToDate(temp)
-                                            : DateConverter.convertLocalDateTimeToDate(h.getHoraTermino())),
+                                        DateConverter.convertLocalDateTimeToDate(temp),
                                         false,
                                         user.getLogin(),
                                         new Date(),
@@ -381,15 +380,14 @@ public class RealizarChamada implements Serializable {
                 // lançamento da falta quando a lista de acesso está vazia
             } else {
                 LocalDateTime temp = h.getHoraInicio();
-                while (temp.getHour() <= h.getHoraTermino().getHour()) {
+                while (temp.getHour() < h.getHoraTermino().getHour()) {
                     Chamada presenca = new Chamada(insc.getSqMatric(),
                         insc.getCdUop(),
                         insc.getCdPrograma(),
                         insc.getCdConfig(),
                         insc.getSqOcorrenc(),
                         DateConverter.convertLocalDateToDate(data),
-                        (!temp.isAfter(h.getHoraTermino()) ? DateConverter.convertLocalDateTimeToDate(temp)
-                            : DateConverter.convertLocalDateTimeToDate(h.getHoraTermino())),
+                        DateConverter.convertLocalDateTimeToDate(temp),
                         false,
                         user.getLogin(),
                         new Date(),

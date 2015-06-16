@@ -64,7 +64,7 @@ public class HistoricoChamadaDao {
     }
 
     
-    public boolean pesquisaChamada(Long programa, Long config, Long ocorrencia, Date mes){
+    public HistoricoChamada pesquisaChamada(Long programa, Long config, Long ocorrencia, Date mes){
         Session s = HibernateUtil.getSession();
         Query q = s.createQuery("from HistoricoChamada hc where hc.cdprograma = :programa "
                 + "and hc.cdconfig = :config and hc.sqocorrenc = :ocorrencia and hc.mes = :mes");
@@ -73,7 +73,7 @@ public class HistoricoChamadaDao {
         q.setParameter("ocorrencia", ocorrencia);
         q.setParameter("mes", mes);
         
-        return q.uniqueResult() != null;
+        return (HistoricoChamada) q.uniqueResult();
         
     }
 }

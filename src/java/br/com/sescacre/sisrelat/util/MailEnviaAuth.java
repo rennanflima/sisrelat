@@ -51,9 +51,9 @@ public class MailEnviaAuth {
             message.setRecipients(Message.RecipientType.TO, toUser);
             message.setSubject(assunto);//Assunto
             message.setText("Este é um e-mail automático. Não é necessário respondê-lo.\n\n"
-                + "Segue abaixo suas informações de acesso ao Sistema de Relatórios e Faltas: \n\n"
+                + "Segue abaixo suas informações de acesso ao Sistema de Chamada Web do Sesc-DR/AC: \n\n"
                 + "Login: " + login + "\nSenha: " + senha + "\n\nEstas informações são necessárias para o seu acesso ao sistema, portanto deverá fornecê-la sempre que utilizá-lo."
-                + " Esta senha foi gerada automaticamente e poderá ser trocada dentro do sistema.\n\n Atenciosamente,\n\nSistema de Relatórios e Faltas.");
+                + " Esta senha foi gerada automaticamente e poderá ser trocada dentro do sistema.\n\n Atenciosamente,\n\nSistema de Chamada Web do Sesc-DR/AC.");
             /**Método para enviar a mensagem criada*/
             Transport.send(message);
 
